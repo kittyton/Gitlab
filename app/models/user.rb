@@ -58,6 +58,9 @@
 
 require 'carrierwave/orm/activerecord'
 require 'file_size_validator'
+require 'net/http' 
+require 'json'
+require 'macaddr'
 
 class User < ActiveRecord::Base
   extend Gitlab::ConfigHelper
@@ -88,7 +91,8 @@ class User < ActiveRecord::Base
   attr_accessor :force_random_password
 
   # Virtual attribute for authenticating by either username or email
-  attr_accessor :login
+  attr_accessor :login 
+  attr_accessor :opType
 
   #
   # Relations
@@ -664,12 +668,69 @@ class User < ActiveRecord::Base
 
   def post_create_hook
     log_info("User \"#{self.name}\" (#{self.email}) was created")
+  ###########################use method#######################################
+  url="http://192.168.4.72:8080/v2/audit/_single"
+  opType="createUser"
+    # data={"appID" =>"appID",
+    #            "appVersion" => "V2.0",
+    #            "fileID"=>"#{self.id}",
+    #            "fileName"=>"#{self.name}",
+    #            "filePath"=>"this is the path",
+    #            "opDate"=>"#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}",
+    #            "opUser"=>"#{self.created_by.username}",
+    #            "opType"=>"#{opType}",
+    #            "message"=>"This is a create user event",
+    #            "macIP"=>"#{Mac.addr}",
+    #            "devInfo"=>"liuqingqing"}.to_json
+              # "eventCode"=>""
+    data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+     self.created_by.username,opType,"This is a create user event",Mac.addr,"liuqingqing")
+   send_http(url,data)
+
+#############################################################################
     notification_service.new_user(self, @reset_token) if self.created_by_id
     system_hook_service.execute_hooks_for(self, :create)
-  end
 
+  end
+#################################New Method by liuqingqing###################################
+#Enclose http request params
+def construct_http_data(appID,appVersion,fileID,fileName,filePath,opDate,opUser,opType,message,macIP,devInfo)
+   http_data={"appID" =>appID,
+               "appVersion" => appVersion,
+               "fileID"=>fileID,
+               "fileName"=>fileName,
+               "filePath"=>filePath,
+               "opDate"=>opDate,
+               "opUser"=>opUser,
+               "opType"=>opType,
+               "message"=>message,
+               "macIP"=>macIP,
+               "devInfo"=>devInfo}.to_json
+  
+end
+
+#Enclose Http request
+def send_http(url,data)  
+    url = URI.parse(url)  
+    req = Net::HTTP::Put.new(url.path,{'Content-Type' => 'application/json'})  
+    req.body = data  
+    res = Net::HTTP.new(url.host,url.port).start{|http| http.request(req)}  
+    log_info(res.code)
+    log_info(res.body)
+    log_info(data)
+    log_info(Mac.addr)                                                                                                 
+end 
+
+##############################################################################
   def post_destroy_hook
     log_info("User \"#{self.name}\" (#{self.email})  was removed")
+    ##########################even log########
+    url="http://192.168.4.72:8080/v2/audit/_single"
+    opType="deleteUser"
+    data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+     self.created_by.username,opType,"This is a delete user event",Mac.addr,"liuqingqing")
+     send_http(url,data)
+    #######################################################################
     system_hook_service.execute_hooks_for(self, :destroy)
   end
 
