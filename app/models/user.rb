@@ -668,32 +668,26 @@ class User < ActiveRecord::Base
 
   def post_create_hook
     log_info("User \"#{self.name}\" (#{self.email}) was created")
-  ###########################use method#######################################
-  url="http://192.168.4.72:8080/v2/audit/_single"
+ 
+  #The audit interface url
+  url="http://192.168.4.72:8080/v2/audit/_single"   
   opType="createUser"
-    # data={"appID" =>"appID",
-    #            "appVersion" => "V2.0",
-    #            "fileID"=>"#{self.id}",
-    #            "fileName"=>"#{self.name}",
-    #            "filePath"=>"this is the path",
-    #            "opDate"=>"#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}",
-    #            "opUser"=>"#{self.created_by.username}",
-    #            "opType"=>"#{opType}",
-    #            "message"=>"This is a create user event",
-    #            "macIP"=>"#{Mac.addr}",
-    #            "devInfo"=>"liuqingqing"}.to_json
-              # "eventCode"=>""
+
+  #Record the create user operation by the audit interface
     data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
      self.created_by.username,opType,"This is a create user event",Mac.addr,"liuqingqing")
-   send_http(url,data)
+   send_http(url,data)       
 
-#############################################################################
+
     notification_service.new_user(self, @reset_token) if self.created_by_id
     system_hook_service.execute_hooks_for(self, :create)
 
   end
-#################################New Method by liuqingqing###################################
-#Enclose http request params
+
+
+#Method Name:construct_http_data
+#Des:Enclose http request params
+#Author Name:liuqingqing
 def construct_http_data(appID,appVersion,fileID,fileName,filePath,opDate,opUser,opType,message,macIP,devInfo)
    http_data={"appID" =>appID,
                "appVersion" => appVersion,
@@ -709,7 +703,9 @@ def construct_http_data(appID,appVersion,fileID,fileName,filePath,opDate,opUser,
   
 end
 
-#Enclose Http request
+#Method name:send_http
+#Des:Enclose Http request
+#Author Name:liuqingqing
 def send_http(url,data)  
     url = URI.parse(url)  
     req = Net::HTTP::Put.new(url.path,{'Content-Type' => 'application/json'})  
@@ -721,16 +717,15 @@ def send_http(url,data)
     log_info(Mac.addr)                                                                                                 
 end 
 
-##############################################################################
   def post_destroy_hook
     log_info("User \"#{self.name}\" (#{self.email})  was removed")
-    ##########################even log########
+
+    #Record the create user operation by the audit interface
     url="http://192.168.4.72:8080/v2/audit/_single"
     opType="deleteUser"
     data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
      self.created_by.username,opType,"This is a delete user event",Mac.addr,"liuqingqing")
      send_http(url,data)
-    #######################################################################
     system_hook_service.execute_hooks_for(self, :destroy)
   end
 
