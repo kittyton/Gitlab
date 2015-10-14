@@ -38,30 +38,18 @@ class ApplicationController < ActionController::Base
   # From https://github.com/plataformatec/devise/wiki/How-To:-Simple-Token-Authentication-Example
   # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
   def authenticate_user_from_token!
-    logger.debug "######authenticate_user_from_token!###################"
     user_token = if params[:authenticity_token].presence
                    params[:authenticity_token].presence
-                   logger.debug "######authenticate_token###########{params[:authenticity_token]}########"
                  elsif params[:private_token].presence
                    params[:private_token].presence
-                   logger.debug "######private_token###########{params[:private_token]}########"
                  end
-=begin
+
     if(session[:nfs]=='1')
       user_token = session[:authenticity_token]
     end
-=end
-    user_token = session[:authenticity_token]
-
-    logger.info "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ session: "
     session.each do |k,v| logger.info "key=#{k} value=#{v}" end
     #user_token=User.find_by(email:)
-    logger.debug "######user_token##### : #{user_token}###################"
-    logger.debug "######user_token.to_s##### : #{user_token.to_s}###################"
     user = user_token && User.find_by_authentication_token(user_token.to_s)
-
-    logger.debug "######===============================##### : #{user}###################"
-
     if user
       # Notice we are passing store false, so the user is not
       # actually stored in the session and a token is needed
@@ -75,17 +63,12 @@ class ApplicationController < ActionController::Base
   def authenticate_user!(*args)
     # If user is not signed-in and tries to access root_path - redirect him to landing page
     # Don't redirect to the default URL to prevent endless redirections
-    logger.debug "######authenticate_user!##### ###################"
-
     if current_application_settings.home_page_url.present? &&
         current_application_settings.home_page_url.chomp('/') != Gitlab.config.gitlab['url'].chomp('/')
-      logger.debug "######Y########################"
       if current_user.nil? && root_path == request.path
-        logger.debug "######Y########################"
         redirect_to current_application_settings.home_page_url and return
       end
     end
-    logger.debug "######before super##########"
     super(*args)
   end
 
@@ -96,7 +79,6 @@ class ApplicationController < ActionController::Base
   end
 
   def reject_blocked!
-    logger.debug "######reject_blocked!##### ###################"
     if current_user && current_user.blocked?
       sign_out current_user
       flash[:alert] = "Your account is blocked. Retry when an admin has unblocked it."
@@ -227,7 +209,6 @@ class ApplicationController < ActionController::Base
   end
 
   def check_password_expiration
-    logger.debug "######check_password_expiration!##### ###################"
     if current_user && current_user.password_expires_at && current_user.password_expires_at < Time.now  && !current_user.ldap_user?
       redirect_to new_profile_password_path and return
     end

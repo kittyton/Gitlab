@@ -16,13 +16,11 @@ class SessionsController < Devise::SessionsController
   end
 
   def create
-    #warden.user.user.key [[28], "$2a$10$NgfWtyUenMsKTcmM7YWfB."]
     session[:_csrf_token] ||= SecureRandom.base64(32)
-    session.each do |k,v| logger.info "key=#{k} value=#{v}" end
-    if user_signed_in?
-      logger.debug "a user has sign_in"
-    end
-    logger.debug "1current_user: #{current_user}"
+    # session.each do |k,v| logger.info "key=#{k} value=#{v}" end
+    # if user_signed_in?
+    #   logger.debug "a user has sign_in"
+    # end
     super do |resource|
       if resource.reset_password_token.present?
         resource.update_attributes(reset_password_token: nil,
@@ -59,7 +57,6 @@ class SessionsController < Devise::SessionsController
       else
         request.fullpath
       end
-    logger.debug "*************************************:#{redirect_path}"
     # Prevent a 'you are already signed in' message directly after signing:
     # we should never redirect to '/users/sign_in' after signing in successfully.
     unless redirect_path == new_user_session_path
