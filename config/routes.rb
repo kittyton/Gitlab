@@ -406,6 +406,11 @@ Gitlab::Application.routes.draw do
 
   devise_scope :user do
     get '/users/auth/:provider/omniauth_error' => 'omniauth_callbacks#omniauth_error', as: :omniauth_error
+    #login_in_with_iscas
+    get '/users/iscas' , to: 'users#iscas'
+    get '/users/iscasCallback' , to: 'users#iscasCallback'
+    get '/users/iscasLogin' , to: 'users#iscasLogin'
+    get '/root/index' , to: 'root#index'
   end
 
   root to: "root#index"
@@ -657,4 +662,6 @@ Gitlab::Application.routes.draw do
   end
 
   get ':id' => 'namespaces#show', constraints: { id: /(?:[^.]|\.(?!atom$))+/, format: /atom/ }
+
+
 end

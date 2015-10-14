@@ -16,8 +16,14 @@ class SessionsController < Devise::SessionsController
   end
 
   def create
+    #warden.user.user.key [[28], "$2a$10$NgfWtyUenMsKTcmM7YWfB."]
+    session[:_csrf_token] ||= SecureRandom.base64(32)
+    session.each do |k,v| logger.info "key=#{k} value=#{v}" end
+    if user_signed_in?
+      logger.debug "a user has sign_in"
+    end
+    logger.debug "1current_user: #{current_user}"
     super do |resource|
-      # User has successfully signed in, so clear any unused reset token
       if resource.reset_password_token.present?
         resource.update_attributes(reset_password_token: nil,
                                    reset_password_sent_at: nil)
@@ -28,11 +34,11 @@ class SessionsController < Devise::SessionsController
   end
 
   private
-
   def user_params
     params.require(:user).permit(:login, :password, :remember_me, :otp_attempt)
   end
 
+  #
   def find_user
     if user_params[:login]
       User.by_login(user_params[:login])
@@ -53,7 +59,7 @@ class SessionsController < Devise::SessionsController
       else
         request.fullpath
       end
-
+    logger.debug "*************************************:#{redirect_path}"
     # Prevent a 'you are already signed in' message directly after signing:
     # we should never redirect to '/users/sign_in' after signing in successfully.
     unless redirect_path == new_user_session_path
@@ -63,9 +69,7 @@ class SessionsController < Devise::SessionsController
 
   def authenticate_with_two_factor
     user = self.resource = find_user
-
     return unless user && user.two_factor_enabled?
-
     if user_params[:otp_attempt].present? && session[:otp_user_id]
       if valid_otp_attempt?(user)
         # Remove any lingering user data from login
@@ -107,4 +111,5 @@ class SessionsController < Devise::SessionsController
     AuditEventService.new(user, user, options).
       for_authentication.security_event
   end
+
 end
