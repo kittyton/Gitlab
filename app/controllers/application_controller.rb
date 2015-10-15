@@ -47,15 +47,12 @@ class ApplicationController < ActionController::Base
     if(session[:nfs]=='1')
       user_token = session[:authenticity_token]
     end
-    session.each do |k,v| logger.info "key=#{k} value=#{v}" end
-    #user_token=User.find_by(email:)
     user = user_token && User.find_by_authentication_token(user_token.to_s)
     if user
       # Notice we are passing store false, so the user is not
       # actually stored in the session and a token is needed
       # for every request. If you want the token to work as a
       # sign in token, you can simply remove store: false.
-      logger.debug "i am going to sign_in"
       sign_in user, store: false
     end
   end

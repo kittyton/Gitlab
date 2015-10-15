@@ -16,11 +16,6 @@ class SessionsController < Devise::SessionsController
   end
 
   def create
-    session[:_csrf_token] ||= SecureRandom.base64(32)
-    # session.each do |k,v| logger.info "key=#{k} value=#{v}" end
-    # if user_signed_in?
-    #   logger.debug "a user has sign_in"
-    # end
     super do |resource|
       if resource.reset_password_token.present?
         resource.update_attributes(reset_password_token: nil,

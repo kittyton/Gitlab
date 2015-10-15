@@ -16,7 +16,6 @@ class UsersController < ApplicationController
 #Author Name:liujinxia
   def iscasCallback
     code = params[:code]
-    logger.debug "code : #{code}"
     accessToken = getAccessTokenByCode(code)
     if accessToken==nil
       redirect_to root_path
@@ -56,13 +55,10 @@ class UsersController < ApplicationController
       #帮助用户实现注册
       registerUrl = URI.parse("http://localhost:3000/users")
       params1 = {}
-      logger.info "userEmail=#{useremail}"
       params1["user[email]"] = useremail
       params1["user[password]"] = useremail
       params1["user[name]"] = useremail.split("@")[0]
-      logger.info "name:#{params1["user[name]"]}"
       params1["user[username]"] = useremail.split("@")[0]
-      logger.info "username:#{params1["user[username]"]}"
       http1 = Net::HTTP.new(registerUrl.host, registerUrl.port)
       req1 = Net::HTTP::Post.new(registerUrl.path)
       req1.set_form_data(params1)
@@ -172,14 +168,9 @@ class UsersController < ApplicationController
     req.set_form_data(params)
     res = http.request(req)
     oauth_access_tokensJson = JSON.parse(res.body)
-    #logger.debug "response.access_token : #{res.access_token}"
-    logger.debug "oauth_access_tokens : #{oauth_access_tokensJson}"
-    logger.debug "request.body : #{req.body}"
     accessToken = oauth_access_tokensJson['access_token']
-    logger.debug "access_token : #{accessToken}"
     #将token信息写入cookies中去
     cookies[:access_token_from_iscas] = accessToken
-    cookies.each do |k,v| logger.info "key=#{k} value=#{v}" end
     accessToken
   end
 
@@ -194,8 +185,6 @@ class UsersController < ApplicationController
     response = http.request(request)
     userInfo = JSON.parse(response.body)
     userEmail = userInfo['owner']['email']
-    logger.debug "userInfo : #{userInfo}"
-    logger.debug "useremail : #{userEmail}"
     userInfo
   end
 
