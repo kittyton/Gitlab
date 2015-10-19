@@ -43,10 +43,6 @@ class ApplicationController < ActionController::Base
                  elsif params[:private_token].presence
                    params[:private_token].presence
                  end
-
-    if(session[:nfs]=='1')
-      user_token = session[:authenticity_token]
-    end
     user = user_token && User.find_by_authentication_token(user_token.to_s)
     if user
       # Notice we are passing store false, so the user is not

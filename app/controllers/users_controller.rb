@@ -22,7 +22,8 @@ class UsersController < ApplicationController
     else
       userInfo = getUserInfoByAccessToken(accessToken)
       userEmail = getUserEmail(userInfo)
-      redirect_to "http://localhost:3000/users/iscasLogin?userEmail=#{userEmail}"
+      username = get_user_name(userInfo)
+      redirect_to "http://localhost:3000/users/iscasLogin?userEmail=#{userEmail}&username=#{username}"
     end
   end
 
@@ -30,10 +31,9 @@ class UsersController < ApplicationController
 #Des:we got the user Info and sign in the gitlab
 #Author Name:liujinxia
   def iscasLogin
-    #设置标记位，以免影响gitlab原版的正常使用
-    session[:nfs]="1"
     loginUrl = URI.parse("http://localhost:3000/users/sign_in")
     useremail = params[:userEmail]
+    username = params[:username]
     params = {}
     params["user[login]"] = useremail
     #查询并判断该用户的信息是否在gitlab中存在
@@ -47,9 +47,10 @@ class UsersController < ApplicationController
       http = Net::HTTP.new(loginUrl.host, loginUrl.port)
       req = Net::HTTP::Post.new(loginUrl.path)
       req.set_form_data(params)
-
       res = http.request(req)
-      session[:authenticity_token] = User.find_by(email:useremail).authentication_token
+      #将已登陆的用户的_gitlab_session写进cookies中
+      response_cookie = res.response['set-cookie'].split(';')[0].split('=')[1]
+      cookies[:_gitlab_session] = response_cookie
       redirect_to root_path
     else
       #帮助用户实现注册
@@ -57,8 +58,8 @@ class UsersController < ApplicationController
       params1 = {}
       params1["user[email]"] = useremail
       params1["user[password]"] = useremail
-      params1["user[name]"] = useremail.split("@")[0]
-      params1["user[username]"] = useremail.split("@")[0]
+      params1["user[name]"] = username
+      params1["user[username]"] = username
       http1 = Net::HTTP.new(registerUrl.host, registerUrl.port)
       req1 = Net::HTTP::Post.new(registerUrl.path)
       req1.set_form_data(params1)
@@ -191,5 +192,10 @@ class UsersController < ApplicationController
   def getUserEmail(userInfo)
     userEmail = userInfo['owner']['email']
     userEmail
+  end
+
+  def get_user_name(userInfo)
+    username= userInfo['owner']['username']
+    username
   end
 end
