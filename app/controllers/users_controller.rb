@@ -16,12 +16,13 @@ class UsersController < ApplicationController
 #Author Name:liujinxia
   def iscasCallback
     code = params[:code]
-    accessToken = getAccessTokenByCode(code)
+    access_token_info = get_access_token_info(code)
+    accessToken = get_accesstoken_by_code(access_token_info)
     if accessToken==nil
       redirect_to root_path
     else
-      userInfo = getUserInfoByAccessToken(accessToken)
-      userEmail = getUserEmail(userInfo)
+      userInfo = get_userInfo_by_accesstoken(accessToken)
+      userEmail = get_user_email(userInfo)
       username = get_user_name(userInfo)
       redirect_to "http://localhost:3000/users/iscasLogin?userEmail=#{userEmail}&username=#{username}"
     end
@@ -64,6 +65,9 @@ class UsersController < ApplicationController
       req1 = Net::HTTP::Post.new(registerUrl.path)
       req1.set_form_data(params1)
       res1 = http1.request(req1)
+
+      response_cookie1 = res1.response['set-cookie'].split(';')[0].split('=')[1]
+      cookies[:_gitlab_session] = response_cookie1
       redirect_to root_path
     end
   end
@@ -73,7 +77,11 @@ class UsersController < ApplicationController
 #Author Name:liujinxia
   def get_current_access_token
     access_token = cookies[:access_token_from_iscas]
-    access_token
+    if access_token==nil
+      return 0#此处需要重新申请授权access_token
+    else
+      return access_token
+    end
   end
 
   def show
@@ -153,7 +161,7 @@ class UsersController < ApplicationController
     @events = @events.limit(20).offset(params[:offset] || 0)
   end
 
-  def getAccessTokenByCode(code)
+  def get_access_token_info(code)
     params = {}
     params["grant_type"] = 'authorization_code'
     params["client_id"] = '7'
@@ -169,13 +177,20 @@ class UsersController < ApplicationController
     req.set_form_data(params)
     res = http.request(req)
     oauth_access_tokensJson = JSON.parse(res.body)
+    oauth_access_tokensJson
+  end
+
+  def get_accesstoken_by_code(oauth_access_tokensJson)
     accessToken = oauth_access_tokensJson['access_token']
-    #将token信息写入cookies中去
-    cookies[:access_token_from_iscas] = accessToken
+    expires_in = oauth_access_tokensJson['expires_in']
+    expires = Time.now+expires_in
+    #将token信息写入cookies中去,包括access_token，expires
+    cookies[:access_token_from_iscas] = {:value=> accessToken, :expires=> expires}
+    value = cookies[:access_token_from_iscas]
     accessToken
   end
 
-  def getUserInfoByAccessToken(accessToken)
+  def get_userInfo_by_accesstoken(accessToken)
     getUserUrl = URI.parse("https://124.16.141.142/api/token-validation")
     http = Net::HTTP.new(getUserUrl.host, getUserUrl.port)
     http.use_ssl = true
@@ -189,7 +204,7 @@ class UsersController < ApplicationController
     userInfo
   end
 
-  def getUserEmail(userInfo)
+  def get_user_email(userInfo)
     userEmail = userInfo['owner']['email']
     userEmail
   end
