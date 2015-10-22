@@ -8,7 +8,8 @@ class UsersController < ApplicationController
 #Des:redirect_to 网络帐号系统
 #Author Name:liujinxia
   def iscas
-    redirect_to "https://124.16.141.142/oauth/authorize?client_id=7&client_secret=h9LAQKuwdM3oaMhT&redirect_uri=http://localhost:3000/users/iscasCallback&response_type=code"
+    url = "#{IscasSettings.network_basic_url}/oauth/authorize?client_id=#{IscasSettings.client_id}&client_secret=#{IscasSettings.client_secret}&redirect_uri=#{IscasSettings.redirect_uri}&response_type=code"
+    redirect_to url
   end
 
 #Method name:iscasCallback
@@ -24,7 +25,7 @@ class UsersController < ApplicationController
       userInfo = get_userInfo_by_accesstoken(accessToken)
       userEmail = get_user_email(userInfo)
       username = get_user_name(userInfo)
-      redirect_to "http://localhost:3000/users/iscasLogin?userEmail=#{userEmail}&username=#{username}"
+      redirect_to "#{IscasSettings.gitlab_basic_url}/users/iscasLogin?userEmail=#{userEmail}&username=#{username}"
     end
   end
 
@@ -32,7 +33,7 @@ class UsersController < ApplicationController
 #Des:we got the user Info and sign in the gitlab
 #Author Name:liujinxia
   def iscasLogin
-    loginUrl = URI.parse("http://localhost:3000/users/sign_in")
+    loginUrl = URI.parse("#{IscasSettings.gitlab_basic_url}/users/sign_in")
     useremail = params[:userEmail]
     username = params[:username]
     params = {}
@@ -55,7 +56,7 @@ class UsersController < ApplicationController
       redirect_to root_path
     else
       #帮助用户实现注册
-      registerUrl = URI.parse("http://localhost:3000/users")
+      registerUrl = URI.parse("#{IscasSettings.gitlab_basic_url}/users")
       params1 = {}
       params1["user[email]"] = useremail
       params1["user[password]"] = useremail
@@ -164,11 +165,11 @@ class UsersController < ApplicationController
   def get_access_token_info(code)
     params = {}
     params["grant_type"] = 'authorization_code'
-    params["client_id"] = '7'
-    params["client_secret"] = 'h9LAQKuwdM3oaMhT'
-    params["redirect_uri"] = 'http://localhost:3000/users/iscasCallback'
+    params["client_id"] = IscasSettings.client_id
+    params["client_secret"] = IscasSettings.client_secret
+    params["redirect_uri"] = IscasSettings.redirect_uri
     params["code"] = code
-    uri = URI.parse("https://124.16.141.142/oauth/access_token")
+    uri = URI.parse("#{IscasSettings.network_basic_url}/oauth/access_token")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -191,7 +192,7 @@ class UsersController < ApplicationController
   end
 
   def get_userInfo_by_accesstoken(accessToken)
-    getUserUrl = URI.parse("https://124.16.141.142/api/token-validation")
+    getUserUrl = URI.parse("#{IscasSettings.network_basic_url}/api/token-validation")
     http = Net::HTTP.new(getUserUrl.host, getUserUrl.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE

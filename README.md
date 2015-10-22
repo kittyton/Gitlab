@@ -104,3 +104,7 @@ Please see [Getting help for GitLab](https://about.gitlab.com/getting-help/) on 
 
 Thanks for [asking this question](https://twitter.com/supersloth/status/489462789384056832) Joshua.
 [These people](https://twitter.com/gitlab/favorites) seem to like it.
+
+
+#2015-10-22
+#新增配置文件，使用Settingslogic,配置地址gitlab/config/iscas.yml

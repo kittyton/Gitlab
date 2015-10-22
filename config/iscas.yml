@@ -1,0 +1,20 @@
+defaults: &defaults
+  network_basic_url: https://124.16.141.142
+  client_secret: h9LAQKuwdM3oaMhT
+  redirect_uri: http://localhost:3000/users/iscasCallback
+  client_id: 7
+  gitlab_basic_url: http://localhost:3000
+
+development:
+  <<: *defaults
+  network_basic_url: https://124.16.141.142
+  client_secret: h9LAQKuwdM3oaMhT
+  redirect_uri: http://localhost:3000/users/iscasCallback
+  client_id: 7
+  gitlab_basic_url: http://localhost:3000
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults
