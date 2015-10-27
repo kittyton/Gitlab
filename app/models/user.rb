@@ -678,9 +678,9 @@ class User < ActiveRecord::Base
   if(self.created_by!=nil)
     opUser=self.created_by.username
   end
-    data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
-     opUser,opType,"This is a create user event",Mac.addr,"liuqingqing")
-   send_http(url,data)       
+    #data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+    # opUser,opType,"This is a create user event",Mac.addr,"liuqingqing")
+    # send_http(url,data)       
 
 
     notification_service.new_user(self, @reset_token) if self.created_by_id
@@ -732,10 +732,10 @@ end
     if(self.created_by!=nil)
     opUser=self.created_by.username
     end
-    data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
-     opUser,opType,"This is a delete user event",Mac.addr,"liuqingqing")
-     send_http(url,data)
-    system_hook_service.execute_hooks_for(self, :destroy)
+    #data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+    # opUser,opType,"This is a delete user event",Mac.addr,"liuqingqing")
+    # send_http(url,data)
+    #system_hook_service.execute_hooks_for(self, :destroy)
   end
 
   def notification_service

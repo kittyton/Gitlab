@@ -15,23 +15,23 @@ class SessionsController < Devise::SessionsController
     super
   end
 
-  def create
-    super do |resource|
-      if resource.reset_password_token.present?
-        resource.update_attributes(reset_password_token: nil,
-                                   reset_password_sent_at: nil)
-      end
-      authenticated_with = user_params[:otp_attempt] ? "two-factor" : "standard"
-      log_audit_event(current_user, with: authenticated_with)
-    end
-  end
+   def create
+     super do |resource|
+       if resource.reset_password_token.present?
+         resource.update_attributes(reset_password_token: nil,
+                                    reset_password_sent_at: nil)
+       end
+       authenticated_with = user_params[:otp_attempt] ? "two-factor" : "standard"
+       log_audit_event(current_user, with: authenticated_with)
+     end
+   end
 
   private
   def user_params
     params.require(:user).permit(:login, :password, :remember_me, :otp_attempt)
   end
 
-  #
+
   def find_user
     if user_params[:login]
       User.by_login(user_params[:login])
