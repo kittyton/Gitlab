@@ -672,11 +672,15 @@ class User < ActiveRecord::Base
   #The audit interface url
   url="http://192.168.4.72:8080/v2/audit/_single"   
   opType="createUser"
-
+  #Handle user register
+  opUser="userRegister"
   #Record the create user operation by the audit interface
+  if(self.created_by!=nil)
+    opUser=self.created_by.username
+  end
     #data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
-     #self.created_by.username,opType,"This is a create user event",Mac.addr,"liuqingqing")
-   #send_http(url,data)       
+    # opUser,opType,"This is a create user event",Mac.addr,"liuqingqing")
+    # send_http(url,data)       
 
 
     notification_service.new_user(self, @reset_token) if self.created_by_id
@@ -723,10 +727,15 @@ end
     #Record the create user operation by the audit interface
     url="http://192.168.4.72:8080/v2/audit/_single"
     opType="deleteUser"
+    #Handle user register
+    opUser="userRegister"
+    if(self.created_by!=nil)
+    opUser=self.created_by.username
+    end
     #data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
-    # self.created_by.username,opType,"This is a delete user event",Mac.addr,"liuqingqing")
+    # opUser,opType,"This is a delete user event",Mac.addr,"liuqingqing")
     # send_http(url,data)
-   # system_hook_service.execute_hooks_for(self, :destroy)
+    #system_hook_service.execute_hooks_for(self, :destroy)
   end
 
   def notification_service
