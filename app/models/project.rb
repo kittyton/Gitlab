@@ -119,7 +119,6 @@ class Project < ActiveRecord::Base
   has_many :starrers, through: :users_star_projects, source: :user
 
   has_one :import_data, dependent: :destroy, class_name: "ProjectImportData"
-  has_one :gitlab_ci_project, dependent: :destroy, class_name: "Ci::Project", foreign_key: :gitlab_id
 
   delegate :name, to: :owner, allow_nil: true, prefix: true
   delegate :members, to: :team, prefix: true
@@ -428,7 +427,7 @@ class Project < ActiveRecord::Base
   end
 
   def gitlab_ci?
-    gitlab_ci_service && gitlab_ci_service.active && gitlab_ci_project.present?
+    gitlab_ci_service && gitlab_ci_service.active 
   end
 
   def ci_services
