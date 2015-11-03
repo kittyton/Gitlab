@@ -220,12 +220,12 @@ class HipchatService < Service
       subject_desc = "##{subject_id}"
       subject_type = "merge request"
       title = format_title(subj_attr[:title])
-    when "Snippet"
-      subj_attr = HashWithIndifferentAccess.new(data[:snippet])
-      subject_id = subj_attr[:id]
-      subject_desc = "##{subject_id}"
-      subject_type = "snippet"
-      title = format_title(subj_attr[:title])
+    # when "Snippet"
+    #   subj_attr = HashWithIndifferentAccess.new(data[:snippet])
+    #   subject_id = subj_attr[:id]
+    #   subject_desc = "##{subject_id}"
+    #   subject_type = "snippet"
+    #   title = format_title(subj_attr[:title])
     end
 
     subject_html = "<a href=\"#{note_url}\">#{subject_type} #{subject_desc}</a>"

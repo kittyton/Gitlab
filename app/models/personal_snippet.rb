@@ -15,5 +15,5 @@
 #  visibility_level :integer          default(0), not null
 #
 
-class PersonalSnippet < Snippet
-end
+# class PersonalSnippet < Snippet
+# end

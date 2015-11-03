@@ -100,9 +100,9 @@ module EventsHelper
           namespace_project_commit_path(event.project.namespace, event.project,
                                         event.note_commit_id,
                                         anchor: dom_id(event.target))
-        elsif event.note_project_snippet?
-          namespace_project_snippet_path(event.project.namespace,
-                                         event.project, event.note_target)
+        # elsif event.note_project_snippet?
+        #   namespace_project_snippet_path(event.project.namespace,
+        #                                  event.project, event.note_target)
         else
           event_note_target_path(event)
         end
