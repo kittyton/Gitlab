@@ -102,28 +102,28 @@ describe SlackService::NoteMessage do
     end
   end
 
-  context 'project snippet notes' do
-    before do
-      @args[:object_attributes][:note] = 'comment on a snippet'
-      @args[:object_attributes][:noteable_type] = 'Snippet'
-      @args[:snippet] = {
-          id: 5,
-          title: "snippet title\ndetails\n"
-      }
-    end
-
-    it 'returns a message regarding notes on a project snippet' do
-      message = SlackService::NoteMessage.new(@args)
-      expect(message.pretext).to eq("Test User commented on " \
-      "<url|snippet #5> in <somewhere.com|project_name>: " \
-      "*snippet title*")
-      expected_attachments =  [
-          {
-              text: "comment on a snippet",
-              color: color,
-          }
-      ]
-      expect(message.attachments).to eq(expected_attachments)
-    end
-  end
+  # context 'project snippet notes' do
+  #   before do
+  #     @args[:object_attributes][:note] = 'comment on a snippet'
+  #     @args[:object_attributes][:noteable_type] = 'Snippet'
+  #     @args[:snippet] = {
+  #         id: 5,
+  #         title: "snippet title\ndetails\n"
+  #     }
+  #   end
+  #
+  #   it 'returns a message regarding notes on a project snippet' do
+  #     message = SlackService::NoteMessage.new(@args)
+  #     expect(message.pretext).to eq("Test User commented on " \
+  #     "<url|snippet #5> in <somewhere.com|project_name>: " \
+  #     "*snippet title*")
+  #     expected_attachments =  [
+  #         {
+  #             text: "comment on a snippet",
+  #             color: color,
+  #         }
+  #     ]
+  #     expect(message.attachments).to eq(expected_attachments)
+  #   end
+  # end
 end
