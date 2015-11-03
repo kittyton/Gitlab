@@ -36,11 +36,11 @@
       = icon('building fw')
       %span
         Continuous Integration
-  = nav_link(controller: :snippets) do
-    = link_to dashboard_snippets_path, title: 'Your snippets', data: {placement: 'right'} do
-      = icon('clipboard fw')
-      %span
-        Snippets
+  -#= nav_link(controller: :snippets) do
+  -#  = link_to dashboard_snippets_path, title: 'Your snippets', data: {placement: 'right'} do
+  -#    = icon('clipboard fw')
+  -#    %span
+  -#      Snippets
   = nav_link(controller: :help) do
     = link_to help_path, title: 'Help', data: {placement: 'right'} do
       = icon('question-circle fw')
