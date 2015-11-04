@@ -168,8 +168,8 @@ module ApplicationHelper
   def search_placeholder
     if @project && @project.persisted?
       'Search in this project'
-    elsif @snippet || @snippets || @show_snippets
-      'Search snippets'
+    # elsif @snippet || @snippets || @show_snippets
+    #   'Search snippets'
     elsif @group && @group.persisted?
       'Search in this group'
     else
