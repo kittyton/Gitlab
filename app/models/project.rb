@@ -51,7 +51,7 @@ class Project < ActiveRecord::Base
   default_value_for :merge_requests_enabled, gitlab_config_features.merge_requests
   default_value_for :wiki_enabled, gitlab_config_features.wiki
   default_value_for :wall_enabled, false
-  default_value_for :snippets_enabled, gitlab_config_features.snippets
+  # default_value_for :snippets_enabled, gitlab_config_features.snippets
 
   # set last_activity_at to the same as created_at
   after_create :set_last_activity_at
