@@ -19,7 +19,7 @@ class SearchController < ApplicationController
     end
 
     @scope = params[:scope]
-    @show_snippets = params[:snippets].eql? 'true'
+    # @show_snippets = params[:snippets].eql? 'true'
 
     @search_results =
       if @project
