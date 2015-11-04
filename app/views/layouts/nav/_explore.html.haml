@@ -9,11 +9,11 @@
       = icon('group fw')
       %span
         Groups
-  = nav_link(controller: :snippets) do
-    = link_to explore_snippets_path, title: 'Snippets', data: {placement: 'right'} do
-      = icon('clipboard fw')
-      %span
-        Snippets
+  -#= nav_link(controller: :snippets) do
+  -#  = link_to explore_snippets_path, title: 'Snippets', data: {placement: 'right'} do
+  -#    = icon('clipboard fw')
+  -#    %span
+  -#      Snippets
   = nav_link(controller: :help) do
     = link_to help_path, title: 'Help', data: {placement: 'right'} do
       = icon('question-circle fw')
