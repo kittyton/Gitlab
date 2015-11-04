@@ -13,11 +13,11 @@
           = link_to new_namespace_project_merge_request_path(@project.namespace, @project) do
             = icon('tasks fw')
             New merge request
-      - if can?(current_user, :create_snippet, @project)
-        %li
-          = link_to new_namespace_project_snippet_path(@project.namespace, @project) do
-            = icon('file-text-o fw')
-            New snippet
+      -#- if can?(current_user, :create_snippet, @project)
+      -#  %li
+      -#    = link_to new_namespace_project_snippet_path(@project.namespace, @project) do
+      -#      = icon('file-text-o fw')
+      -#      New snippet
       - if can?(current_user, :push_code, @project)
         %li.divider
         %li
