@@ -33,17 +33,17 @@ describe VisibilityLevelHelper do
     end
 
     context 'form_model argument is a String' do
-      context 'model object is a personal snippet' do
-        it_behaves_like 'a visibility level description' do
-          let(:form_model) { 'PersonalSnippet' }
-        end
-      end
+      # context 'model object is a personal snippet' do
+      #   it_behaves_like 'a visibility level description' do
+      #     let(:form_model) { 'PersonalSnippet' }
+      #   end
+      # end
 
-      context 'model object is a project snippet' do
-        it_behaves_like 'a visibility level description' do
-          let(:form_model) { 'ProjectSnippet' }
-        end
-      end
+      # context 'model object is a project snippet' do
+      #   it_behaves_like 'a visibility level description' do
+      #     let(:form_model) { 'ProjectSnippet' }
+      #   end
+      # end
 
       context 'model object is a project' do
         it_behaves_like 'a visibility level description' do
@@ -53,17 +53,17 @@ describe VisibilityLevelHelper do
     end
 
     context 'form_model argument is a model object' do
-      context 'model object is a personal snippet' do
-        it_behaves_like 'a visibility level description' do
-          let(:form_model) { create(:personal_snippet) }
-        end
-      end
+      # context 'model object is a personal snippet' do
+      #   it_behaves_like 'a visibility level description' do
+      #     let(:form_model) { create(:personal_snippet) }
+      #   end
+      # end
 
-      context 'model object is a project snippet' do
-        it_behaves_like 'a visibility level description' do
-          let(:form_model) { create(:project_snippet, project: project) }
-        end
-      end
+      # context 'model object is a project snippet' do
+      #   it_behaves_like 'a visibility level description' do
+      #     let(:form_model) { create(:project_snippet, project: project) }
+      #   end
+      # end
 
       context 'model object is a project' do
         it_behaves_like 'a visibility level description' do
@@ -100,15 +100,15 @@ describe VisibilityLevelHelper do
       end
     end
 
-    describe "Snippet" do
-      let(:snippet) { create(:snippet, visibility_level: Gitlab::VisibilityLevel::INTERNAL) }
-
-      it "skips levels" do
-        expect(skip_level?(snippet, Gitlab::VisibilityLevel::PUBLIC)).to be_falsey
-        expect(skip_level?(snippet, Gitlab::VisibilityLevel::INTERNAL)).to be_falsey
-        expect(skip_level?(snippet, Gitlab::VisibilityLevel::PRIVATE)).to be_falsey
-      end
-    end
+    # describe "Snippet" do
+    #   let(:snippet) { create(:snippet, visibility_level: Gitlab::VisibilityLevel::INTERNAL) }
+    #
+    #   it "skips levels" do
+    #     expect(skip_level?(snippet, Gitlab::VisibilityLevel::PUBLIC)).to be_falsey
+    #     expect(skip_level?(snippet, Gitlab::VisibilityLevel::INTERNAL)).to be_falsey
+    #     expect(skip_level?(snippet, Gitlab::VisibilityLevel::PRIVATE)).to be_falsey
+    #   end
+    # end
 
   end
 end

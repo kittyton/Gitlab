@@ -82,9 +82,9 @@ class MarkdownFeature
     @xmerge_request ||= create(:merge_request, :simple, source_project: xproject)
   end
 
-  def xsnippet
-    @xsnippet ||= create(:project_snippet, project: xproject)
-  end
+  # def xsnippet
+  #   @xsnippet ||= create(:project_snippet, project: xproject)
+  # end
 
   def xcommit
     @xcommit ||= xproject.commit
