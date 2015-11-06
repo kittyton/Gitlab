@@ -125,9 +125,9 @@ module ProjectsHelper
       nav_tabs << :wiki
     end
 
-    if can?(current_user, :read_project_snippet, project)
-      nav_tabs << :snippets
-    end
+    # if can?(current_user, :read_project_snippet, project)
+    #   nav_tabs << :snippets
+    # end
 
     if can?(current_user, :read_label, project)
       nav_tabs << :labels

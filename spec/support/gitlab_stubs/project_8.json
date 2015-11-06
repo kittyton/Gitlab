@@ -20,7 +20,7 @@
   "merge_requests_enabled":true, 
   "wall_enabled":false, 
   "wiki_enabled":true, 
-  "snippets_enabled":false, 
+//  "snippets_enabled":false,
   "created_at":"2013-03-20T13:28:53Z", 
   "last_activity_at":"2013-11-30T00:11:17Z", 
   "namespace":{

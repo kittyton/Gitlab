@@ -17,8 +17,8 @@ module VisibilityLevelHelper
   #              a Project or Snippet class.
   def visibility_level_description(level, form_model)
     case form_model.is_a?(String) ? form_model : form_model.class.name
-    when 'PersonalSnippet', 'ProjectSnippet', 'Snippet'
-      snippet_visibility_level_description(level)
+    # when 'PersonalSnippet', 'ProjectSnippet', 'Snippet'
+    #   snippet_visibility_level_description(level)
     when 'Project'
       project_visibility_level_description(level)
     end
@@ -42,22 +42,22 @@ module VisibilityLevelHelper
     end
   end
 
-  def snippet_visibility_level_description(level)
-    capture_haml do
-      haml_tag :span do
-        case level
-        when Gitlab::VisibilityLevel::PRIVATE
-          haml_concat "The snippet is visible only for me."
-        when Gitlab::VisibilityLevel::INTERNAL
-          haml_concat "The snippet is visible for any logged in user."
-        when Gitlab::VisibilityLevel::PUBLIC
-          haml_concat "The snippet can be accessed"
-          haml_concat "without any"
-          haml_concat "authentication."
-        end
-      end
-    end
-  end
+  # def snippet_visibility_level_description(level)
+  #   capture_haml do
+  #     haml_tag :span do
+  #       case level
+  #       when Gitlab::VisibilityLevel::PRIVATE
+  #         haml_concat "The snippet is visible only for me."
+  #       when Gitlab::VisibilityLevel::INTERNAL
+  #         haml_concat "The snippet is visible for any logged in user."
+  #       when Gitlab::VisibilityLevel::PUBLIC
+  #         haml_concat "The snippet can be accessed"
+  #         haml_concat "without any"
+  #         haml_concat "authentication."
+  #       end
+  #     end
+  #   end
+  # end
 
   def visibility_level_icon(level)
     case level
@@ -83,9 +83,9 @@ module VisibilityLevelHelper
     current_application_settings.default_project_visibility
   end
 
-  def default_snippet_visibility
-    current_application_settings.default_snippet_visibility
-  end
+  # def default_snippet_visibility
+  #   current_application_settings.default_snippet_visibility
+  # end
 
   def skip_level?(form_model, level)
     form_model.is_a?(Project) &&

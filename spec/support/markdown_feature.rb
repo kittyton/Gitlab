@@ -37,9 +37,9 @@ class MarkdownFeature
     @merge_request ||= create(:merge_request, :simple, source_project: project)
   end
 
-  def snippet
-    @snippet ||= create(:project_snippet, project: project)
-  end
+  # def snippet
+  #   @snippet ||= create(:project_snippet, project: project)
+  # end
 
   def commit
     @commit ||= project.commit

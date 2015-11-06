@@ -91,7 +91,7 @@ module API
                                      :issues_enabled,
                                      :merge_requests_enabled,
                                      :wiki_enabled,
-                                     :snippets_enabled,
+                                     # :snippets_enabled,
                                      :namespace_id,
                                      :public,
                                      :visibility_level,
@@ -133,7 +133,7 @@ module API
                                      :issues_enabled,
                                      :merge_requests_enabled,
                                      :wiki_enabled,
-                                     :snippets_enabled,
+                                     # :snippets_enabled,
                                      :public,
                                      :visibility_level,
                                      :import_url]
@@ -186,7 +186,7 @@ module API
                                      :issues_enabled,
                                      :merge_requests_enabled,
                                      :wiki_enabled,
-                                     :snippets_enabled,
+                                     # :snippets_enabled,
                                      :public,
                                      :visibility_level]
         attrs = map_public_to_visibility_level(attrs)

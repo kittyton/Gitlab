@@ -65,13 +65,13 @@ describe Gitlab::UrlBuilder do
     end
   end
 
-  describe 'When asking for a note on project snippet' do
-    let(:snippet) { create(:project_snippet) }
-    let(:note) { create(:note_on_project_snippet, noteable_id: snippet.id) }
-    let(:url) { Gitlab::UrlBuilder.new(:note).build(note.id) }
-
-    it 'returns the note url' do
-      expect(url).to eq "#{Settings.gitlab['url']}/#{snippet.project.path_with_namespace}/snippets/#{note.noteable_id}#note_#{note.id}"
-    end
-  end
+  # describe 'When asking for a note on project snippet' do
+  #   let(:snippet) { create(:project_snippet) }
+  #   let(:note) { create(:note_on_project_snippet, noteable_id: snippet.id) }
+  #   let(:url) { Gitlab::UrlBuilder.new(:note).build(note.id) }
+  #
+  #   it 'returns the note url' do
+  #     expect(url).to eq "#{Settings.gitlab['url']}/#{snippet.project.path_with_namespace}/snippets/#{note.noteable_id}#note_#{note.id}"
+  #   end
+  # end
 end

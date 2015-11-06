@@ -39,7 +39,7 @@ module API
     mount Notes
     mount Internal
     mount SystemHooks
-    mount ProjectSnippets
+    # mount ProjectSnippets
     mount ProjectMembers
     mount DeployKeys
     mount ProjectHooks

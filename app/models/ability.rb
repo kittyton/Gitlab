@@ -9,8 +9,8 @@ class Ability
       when "Project" then project_abilities(user, subject)
       when "Issue" then issue_abilities(user, subject)
       when "Note" then note_abilities(user, subject)
-      when "ProjectSnippet" then project_snippet_abilities(user, subject)
-      when "PersonalSnippet" then personal_snippet_abilities(user, subject)
+      # when "ProjectSnippet" then project_snippet_abilities(user, subject)
+      # when "PersonalSnippet" then personal_snippet_abilities(user, subject)
       when "MergeRequest" then merge_request_abilities(user, subject)
       when "Group" then group_abilities(user, subject)
       when "Namespace" then namespace_abilities(user, subject)
@@ -37,7 +37,7 @@ class Ability
           :read_issue,
           :read_label,
           :read_milestone,
-          :read_project_snippet,
+          # :read_project_snippet,
           :read_project_member,
           :read_merge_request,
           :read_note,
@@ -123,7 +123,7 @@ class Ability
         :read_issue,
         :read_label,
         :read_milestone,
-        :read_project_snippet,
+        # :read_project_snippet,
         :read_project_member,
         :read_merge_request,
         :read_note,
@@ -137,7 +137,7 @@ class Ability
       project_guest_rules + [
         :download_code,
         :fork_project,
-        :create_project_snippet,
+        # :create_project_snippet,
         :update_issue,
         :admin_issue,
         :admin_label
@@ -167,10 +167,10 @@ class Ability
     def project_master_rules
       project_dev_rules + [
         :push_code_to_protected_branches,
-        :update_project_snippet,
+        # :update_project_snippet,
         :update_merge_request,
         :admin_milestone,
-        :admin_project_snippet,
+        # :admin_project_snippet,
         :admin_project_member,
         :admin_merge_request,
         :admin_note,
@@ -205,9 +205,9 @@ class Ability
         rules += named_abilities('milestone')
       end
 
-      unless project.snippets_enabled
-        rules += named_abilities('project_snippet')
-      end
+      # unless project.snippets_enabled
+      #   rules += named_abilities('project_snippet')
+      # end
 
       unless project.wiki_enabled
         rules += named_abilities('wiki')
@@ -273,7 +273,8 @@ class Ability
       end
     end
 
-    [:note, :project_snippet, :personal_snippet].each do |name|
+    #[:note, :project_snippet, :personal_snippet].each do |name|
+    [:note].each do |name|
       define_method "#{name}_abilities" do |user, subject|
         rules = []
 
