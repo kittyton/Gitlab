@@ -15,7 +15,8 @@ namespace :spinach do
   task :other do
     cmds = [
       %W(rake gitlab:setup),
-      %W(spinach --tags @admin,@dashboard,@profile,@public,@snippets),
+      # %W(spinach --tags @admin,@dashboard,@profile,@public,@snippets),
+      %W(spinach --tags @admin,@dashboard,@profile,@public),
     ]
     run_commands(cmds)
   end
