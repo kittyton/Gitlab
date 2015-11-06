@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(version: 20150920161119) do
     t.boolean  "version_check_enabled",        default: true
     t.integer  "max_attachment_size",          default: 10,    null: false
     t.integer  "default_project_visibility"
-    t.integer  "default_snippet_visibility"
+    # t.integer  "default_snippet_visibility"
     t.text     "restricted_signup_domains"
     t.boolean  "user_oauth_applications",      default: true
     t.string   "after_sign_out_path"
@@ -586,7 +586,7 @@ ActiveRecord::Schema.define(version: 20150920161119) do
     t.integer  "namespace_id"
     t.string   "issues_tracker",         default: "gitlab", null: false
     t.string   "issues_tracker_id"
-    t.boolean  "snippets_enabled",       default: true,     null: false
+    # t.boolean  "snippets_enabled",       default: true,     null: false
     t.datetime "last_activity_at"
     t.string   "import_url"
     t.integer  "visibility_level",       default: 0,        null: false
@@ -647,25 +647,25 @@ ActiveRecord::Schema.define(version: 20150920161119) do
   add_index "services", ["created_at", "id"], name: "index_services_on_created_at_and_id", using: :btree
   add_index "services", ["project_id"], name: "index_services_on_project_id", using: :btree
 
-  create_table "snippets", force: true do |t|
-    t.string   "title"
-    t.text     "content"
-    t.integer  "author_id",                    null: false
-    t.integer  "project_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "file_name"
-    t.datetime "expires_at"
-    t.string   "type"
-    t.integer  "visibility_level", default: 0, null: false
-  end
+  # create_table "snippets", force: true do |t|
+  #   t.string   "title"
+  #   t.text     "content"
+  #   t.integer  "author_id",                    null: false
+  #   t.integer  "project_id"
+  #   t.datetime "created_at"
+  #   t.datetime "updated_at"
+  #   t.string   "file_name"
+  #   t.datetime "expires_at"
+  #   t.string   "type"
+  #   t.integer  "visibility_level", default: 0, null: false
+  # end
 
-  add_index "snippets", ["author_id"], name: "index_snippets_on_author_id", using: :btree
-  add_index "snippets", ["created_at", "id"], name: "index_snippets_on_created_at_and_id", using: :btree
-  add_index "snippets", ["created_at"], name: "index_snippets_on_created_at", using: :btree
-  add_index "snippets", ["expires_at"], name: "index_snippets_on_expires_at", using: :btree
-  add_index "snippets", ["project_id"], name: "index_snippets_on_project_id", using: :btree
-  add_index "snippets", ["visibility_level"], name: "index_snippets_on_visibility_level", using: :btree
+  # add_index "snippets", ["author_id"], name: "index_snippets_on_author_id", using: :btree
+  # add_index "snippets", ["created_at", "id"], name: "index_snippets_on_created_at_and_id", using: :btree
+  # add_index "snippets", ["created_at"], name: "index_snippets_on_created_at", using: :btree
+  # add_index "snippets", ["expires_at"], name: "index_snippets_on_expires_at", using: :btree
+  # add_index "snippets", ["project_id"], name: "index_snippets_on_project_id", using: :btree
+  # add_index "snippets", ["visibility_level"], name: "index_snippets_on_visibility_level", using: :btree
 
   create_table "subscriptions", force: true do |t|
     t.integer  "user_id"
