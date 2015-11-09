@@ -154,7 +154,7 @@ describe "Internal Project Access", feature: true  do
 
   # describe "GET /:project_path/snippets" do
   #   subject { namespace_project_snippets_path(project.namespace, project) }
-  #
+
   #   it { is_expected.to be_allowed_for master }
   #   it { is_expected.to be_allowed_for reporter }
   #   it { is_expected.to be_allowed_for :admin }
@@ -165,7 +165,7 @@ describe "Internal Project Access", feature: true  do
 
   # describe "GET /:project_path/snippets/new" do
   #   subject { new_namespace_project_snippet_path(project.namespace, project) }
-  #
+
   #   it { is_expected.to be_allowed_for master }
   #   it { is_expected.to be_allowed_for reporter }
   #   it { is_expected.to be_allowed_for :admin }

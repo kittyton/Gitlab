@@ -95,13 +95,13 @@ module MarkdownMatchers
   end
 
   # SnippetReferenceFilter
-  matcher :reference_snippets do
-    set_default_markdown_messages
-
-    match do |actual|
-      expect(actual).to have_selector('a.gfm.gfm-snippet', count: 2)
-    end
-  end
+  # matcher :reference_snippets do
+  #   set_default_markdown_messages
+  #
+  #   match do |actual|
+  #     expect(actual).to have_selector('a.gfm.gfm-snippet', count: 2)
+  #   end
+  # end
 
   # CommitRangeReferenceFilter
   matcher :reference_commit_ranges do
