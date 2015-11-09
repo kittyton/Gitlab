@@ -36,9 +36,9 @@ module SharedProjectTab
     ensure_active_main_tab('Merge Requests')
   end
 
-  step 'the active main tab should be Snippets' do
-    ensure_active_main_tab('Snippets')
-  end
+  # step 'the active main tab should be Snippets' do
+  #   ensure_active_main_tab('Snippets')
+  # end
 
   step 'the active main tab should be Wiki' do
     ensure_active_main_tab('Wiki')
