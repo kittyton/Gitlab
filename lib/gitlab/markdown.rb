@@ -43,7 +43,7 @@ module Gitlab
     autoload :MergeRequestReferenceFilter,  'gitlab/markdown/merge_request_reference_filter'
     autoload :RelativeLinkFilter,           'gitlab/markdown/relative_link_filter'
     autoload :SanitizationFilter,           'gitlab/markdown/sanitization_filter'
-    autoload :SnippetReferenceFilter,       'gitlab/markdown/snippet_reference_filter'
+    # autoload :SnippetReferenceFilter,       'gitlab/markdown/snippet_reference_filter'
     autoload :SyntaxHighlightFilter,        'gitlab/markdown/syntax_highlight_filter'
     autoload :TableOfContentsFilter,        'gitlab/markdown/table_of_contents_filter'
     autoload :TaskListFilter,               'gitlab/markdown/task_list_filter'
@@ -150,7 +150,7 @@ module Gitlab
         Gitlab::Markdown::IssueReferenceFilter,
         Gitlab::Markdown::ExternalIssueReferenceFilter,
         Gitlab::Markdown::MergeRequestReferenceFilter,
-        Gitlab::Markdown::SnippetReferenceFilter,
+        # Gitlab::Markdown::SnippetReferenceFilter,
         Gitlab::Markdown::CommitRangeReferenceFilter,
         Gitlab::Markdown::CommitReferenceFilter,
         Gitlab::Markdown::LabelReferenceFilter,

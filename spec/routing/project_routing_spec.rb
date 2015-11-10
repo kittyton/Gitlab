@@ -271,39 +271,39 @@ end
 #      project_snippet GET    /:project_id/snippets/:id(.:format)      snippets#show
 #                      PUT    /:project_id/snippets/:id(.:format)      snippets#update
 #                      DELETE /:project_id/snippets/:id(.:format)      snippets#destroy
-describe SnippetsController, 'routing' do
-  it 'to #raw' do
-    expect(get('/gitlab/gitlabhq/snippets/1/raw')).to route_to('projects/snippets#raw', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
-  end
-
-  it 'to #index' do
-    expect(get('/gitlab/gitlabhq/snippets')).to route_to('projects/snippets#index', namespace_id: 'gitlab', project_id: 'gitlabhq')
-  end
-
-  it 'to #create' do
-    expect(post('/gitlab/gitlabhq/snippets')).to route_to('projects/snippets#create', namespace_id: 'gitlab', project_id: 'gitlabhq')
-  end
-
-  it 'to #new' do
-    expect(get('/gitlab/gitlabhq/snippets/new')).to route_to('projects/snippets#new', namespace_id: 'gitlab', project_id: 'gitlabhq')
-  end
-
-  it 'to #edit' do
-    expect(get('/gitlab/gitlabhq/snippets/1/edit')).to route_to('projects/snippets#edit', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
-  end
-
-  it 'to #show' do
-    expect(get('/gitlab/gitlabhq/snippets/1')).to route_to('projects/snippets#show', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
-  end
-
-  it 'to #update' do
-    expect(put('/gitlab/gitlabhq/snippets/1')).to route_to('projects/snippets#update', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
-  end
-
-  it 'to #destroy' do
-    expect(delete('/gitlab/gitlabhq/snippets/1')).to route_to('projects/snippets#destroy', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
-  end
-end
+# describe SnippetsController, 'routing' do
+#   it 'to #raw' do
+#     expect(get('/gitlab/gitlabhq/snippets/1/raw')).to route_to('projects/snippets#raw', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
+#   end
+#
+#   it 'to #index' do
+#     expect(get('/gitlab/gitlabhq/snippets')).to route_to('projects/snippets#index', namespace_id: 'gitlab', project_id: 'gitlabhq')
+#   end
+#
+#   it 'to #create' do
+#     expect(post('/gitlab/gitlabhq/snippets')).to route_to('projects/snippets#create', namespace_id: 'gitlab', project_id: 'gitlabhq')
+#   end
+#
+#   it 'to #new' do
+#     expect(get('/gitlab/gitlabhq/snippets/new')).to route_to('projects/snippets#new', namespace_id: 'gitlab', project_id: 'gitlabhq')
+#   end
+#
+#   it 'to #edit' do
+#     expect(get('/gitlab/gitlabhq/snippets/1/edit')).to route_to('projects/snippets#edit', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
+#   end
+#
+#   it 'to #show' do
+#     expect(get('/gitlab/gitlabhq/snippets/1')).to route_to('projects/snippets#show', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
+#   end
+#
+#   it 'to #update' do
+#     expect(put('/gitlab/gitlabhq/snippets/1')).to route_to('projects/snippets#update', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
+#   end
+#
+#   it 'to #destroy' do
+#     expect(delete('/gitlab/gitlabhq/snippets/1')).to route_to('projects/snippets#destroy', namespace_id: 'gitlab', project_id: 'gitlabhq', id: '1')
+#   end
+# end
 
 # test_project_hook GET    /:project_id/hooks/:id/test(.:format) hooks#test
 #     project_hooks GET    /:project_id/hooks(.:format)          hooks#index

@@ -5,7 +5,7 @@
     Search results for
     %code
       = @search_term
-    - unless @show_snippets
+    - unless false
       - if @project
         in project #{link_to @project.name_with_namespace, [@project.namespace.becomes(Namespace), @project]}
       - elsif @group

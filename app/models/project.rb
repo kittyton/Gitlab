@@ -51,7 +51,7 @@ class Project < ActiveRecord::Base
   default_value_for :merge_requests_enabled, gitlab_config_features.merge_requests
   default_value_for :wiki_enabled, gitlab_config_features.wiki
   default_value_for :wall_enabled, false
-  default_value_for :snippets_enabled, gitlab_config_features.snippets
+  # default_value_for :snippets_enabled, gitlab_config_features.snippets
 
   # set last_activity_at to the same as created_at
   after_create :set_last_activity_at
@@ -108,7 +108,7 @@ class Project < ActiveRecord::Base
   has_many :events,             dependent: :destroy
   has_many :milestones,         dependent: :destroy
   has_many :notes,              dependent: :destroy
-  has_many :snippets,           dependent: :destroy, class_name: 'ProjectSnippet'
+  # has_many :snippets,           dependent: :destroy, class_name: 'ProjectSnippet'
   has_many :hooks,              dependent: :destroy, class_name: 'ProjectHook'
   has_many :protected_branches, dependent: :destroy
   has_many :project_members, dependent: :destroy, as: :source, class_name: 'ProjectMember'

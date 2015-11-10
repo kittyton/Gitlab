@@ -61,13 +61,13 @@ describe 'Gitlab::NoteDataBuilder' do
     end
   end
 
-  describe 'When asking for a note on project snippet' do
-    let!(:snippet) { create(:project_snippet, created_at: fixed_time, updated_at: fixed_time) }
-    let!(:note) { create(:note_on_project_snippet, noteable_id: snippet.id) }
-
-    it 'returns the note and project snippet data' do
-      expect(data).to have_key(:snippet)
-      expect(data[:snippet]).to eq(snippet.hook_attrs)
-    end
-  end
+  # describe 'When asking for a note on project snippet' do
+  #   let!(:snippet) { create(:project_snippet, created_at: fixed_time, updated_at: fixed_time) }
+  #   let!(:note) { create(:note_on_project_snippet, noteable_id: snippet.id) }
+  #
+  #   it 'returns the note and project snippet data' do
+  #     expect(data).to have_key(:snippet)
+  #     expect(data[:snippet]).to eq(snippet.hook_attrs)
+  #   end
+  # end
 end

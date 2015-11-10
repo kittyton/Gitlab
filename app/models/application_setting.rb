@@ -81,7 +81,7 @@ class ApplicationSetting < ActiveRecord::Base
       max_attachment_size: Settings.gitlab['max_attachment_size'],
       session_expire_delay: Settings.gitlab['session_expire_delay'],
       default_project_visibility: Settings.gitlab.default_projects_features['visibility_level'],
-      default_snippet_visibility: Settings.gitlab.default_projects_features['visibility_level'],
+      # default_snippet_visibility: Settings.gitlab.default_projects_features['visibility_level'],
       restricted_signup_domains: Settings.gitlab['restricted_signup_domains'],
       import_sources: ['github','bitbucket','gitlab','gitorious','google_code','fogbugz','git']
     )

@@ -27,8 +27,8 @@ class SlackService
         create_issue_note(HashWithIndifferentAccess.new(params[:issue]))
       when "MergeRequest"
         create_merge_note(HashWithIndifferentAccess.new(params[:merge_request]))
-      when "Snippet"
-        create_snippet_note(HashWithIndifferentAccess.new(params[:snippet]))
+      # when "Snippet"
+      #   create_snippet_note(HashWithIndifferentAccess.new(params[:snippet]))
       end
     end
 
@@ -64,12 +64,12 @@ class SlackService
       @message = "#{@user_name} commented on #{merge_request_link} in #{project_link}: *#{title}*"
     end
 
-    def create_snippet_note(snippet)
-      snippet_id = snippet[:id]
-      snippet_link = "[snippet ##{snippet_id}](#{@note_url})"
-      title = format_title(snippet[:title])
-      @message = "#{@user_name} commented on #{snippet_link} in #{project_link}: *#{title}*"
-    end
+    # def create_snippet_note(snippet)
+    #   snippet_id = snippet[:id]
+    #   snippet_link = "[snippet ##{snippet_id}](#{@note_url})"
+    #   title = format_title(snippet[:title])
+    #   @message = "#{@user_name} commented on #{snippet_link} in #{project_link}: *#{title}*"
+    # end
 
     def description_message
       [{ text: format(@note), color: attachment_color }]

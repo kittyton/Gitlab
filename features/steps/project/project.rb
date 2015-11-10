@@ -113,9 +113,9 @@ class Spinach::Features::Project < Spinach::FeatureSteps
     expect(page).not_to have_link 'New Merge Request'
   end
 
-  step 'I should not see "Snippets" button' do
-    expect(page).not_to have_link 'Snippets'
-  end
+  # step 'I should not see "Snippets" button' do
+  #   expect(page).not_to have_link 'Snippets'
+  # end
 
   step 'project "Shop" belongs to group' do
     group = create(:group)

@@ -41,13 +41,13 @@ Gitlab::Application.routes.draw do
   #
   # Global snippets
   #
-  resources :snippets do
-    member do
-      get 'raw'
-    end
-  end
-
-  get '/s/:username' => 'snippets#index', as: :user_snippets, constraints: { username: /.*/ }
+  # resources :snippets do
+  #   member do
+  #     get 'raw'
+  #   end
+  # end
+  #
+  # get '/s/:username' => 'snippets#index', as: :user_snippets, constraints: { username: /.*/ }
 
   #
   # Invites
@@ -143,7 +143,7 @@ Gitlab::Application.routes.draw do
     end
 
     resources :groups, only: [:index]
-    resources :snippets, only: [:index]
+    # resources :snippets, only: [:index]
     root to: 'projects#trending'
   end
 
@@ -273,7 +273,7 @@ Gitlab::Application.routes.draw do
       resources :milestones, only: [:index, :show]
 
       resources :groups, only: [:index]
-      resources :snippets, only: [:index]
+      # resources :snippets, only: [:index]
 
       resources :projects, only: [:index] do
         collection do
@@ -423,11 +423,11 @@ Gitlab::Application.routes.draw do
         get '/compare/:from...:to' => 'compare#show', :as => 'compare',
             :constraints => { from: /.+/, to: /.+/ }
 
-        resources :snippets, constraints: { id: /\d+/ } do
-          member do
-            get 'raw'
-          end
-        end
+        # resources :snippets, constraints: { id: /\d+/ } do
+        #   member do
+        #     get 'raw'
+        #   end
+        # end
 
         WIKI_SLUG_ID = { id: /[a-zA-Z.0-9_\-\/]+/ } unless defined? WIKI_SLUG_ID
 
