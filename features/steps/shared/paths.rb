@@ -455,17 +455,17 @@ module SharedPaths
   # Snippets
   # ----------------------------------------
 
-  # step 'I visit project "Shop" snippets page' do
-  #   visit namespace_project_snippets_path(project.namespace, project)
-  # end
-  #
-  # step 'I visit snippets page' do
-  #   visit explore_snippets_path
-  # end
-  #
-  # step 'I visit new snippet page' do
-  #   visit new_snippet_path
-  # end
+  step 'I visit project "Shop" snippets page' do
+    visit namespace_project_snippets_path(project.namespace, project)
+  end
+
+  step 'I visit snippets page' do
+    visit explore_snippets_path
+  end
+
+  step 'I visit new snippet page' do
+    visit new_snippet_path
+  end
 
   def root_ref
     @project.repository.root_ref
