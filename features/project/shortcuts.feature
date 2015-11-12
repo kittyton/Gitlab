@@ -36,10 +36,10 @@ Feature: Project Shortcuts
     Given I press "g" and "m"
     Then the active main tab should be Merge Requests
 
-#  @javascript
-#  Scenario: Navigate to snippets tab
-#    Given I press "g" and "s"
-#    Then the active main tab should be Snippets
+  @javascript
+  Scenario: Navigate to snippets tab
+    Given I press "g" and "s"
+    Then the active main tab should be Snippets
 
   @javascript
   Scenario: Navigate to wiki tab
