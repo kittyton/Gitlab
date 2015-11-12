@@ -18,9 +18,9 @@ gem 'sprockets', '~> 2.12.3'
 gem "default_value_for", "~> 3.0.0"
 
 # Supported DBs
-#gem "mysql2", '~> 0.3.16', group: :mysql
+gem "mysql2", '~> 0.3.16', group: :mysql
 gem "pg", '~> 0.18.2', group: :postgres
-gem "mysql2", '~> 0.3.16'
+
 # Authentication libraries
 gem "devise", '~> 3.5.2'
 gem "devise-async", '~> 0.9.0'
