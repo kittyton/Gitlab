@@ -58,9 +58,6 @@
 
 require 'carrierwave/orm/activerecord'
 require 'file_size_validator'
-require 'net/http' 
-require 'json'
-require 'macaddr'
 
 class User < ActiveRecord::Base
   extend Gitlab::ConfigHelper
@@ -70,7 +67,6 @@ class User < ActiveRecord::Base
   include Referable
   include Sortable
   include TokenAuthenticatable
-  include HttpHelper
   include IscasAuditService
   default_value_for :admin, false
   default_value_for :can_create_group, gitlab_config.default_can_create_group

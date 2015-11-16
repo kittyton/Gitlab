@@ -1,11 +1,10 @@
 module IscasAuditService
-	
+	include HttpHelper
   #Method name:send_http
   #Des:Enclose Http request
   #Author Name:liuqingqing
 def record_user_related_operation(opType)
   #The audit interface url
-  #url="#{AuditSettings.audit_url}"
   url="#{IscasSettings.audit_url}"
   #Handle user register
   opUser="userRegister"
