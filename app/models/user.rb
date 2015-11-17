@@ -67,7 +67,7 @@ class User < ActiveRecord::Base
   include Referable
   include Sortable
   include TokenAuthenticatable
-
+  include IscasAuditService
   default_value_for :admin, false
   default_value_for :can_create_group, gitlab_config.default_can_create_group
   default_value_for :can_create_team, false
@@ -88,7 +88,8 @@ class User < ActiveRecord::Base
   attr_accessor :force_random_password
 
   # Virtual attribute for authenticating by either username or email
-  attr_accessor :login
+  attr_accessor :login 
+  attr_accessor :opType
 
   #
   # Relations
@@ -663,14 +664,21 @@ class User < ActiveRecord::Base
   end
 
   def post_create_hook
-    log_info("User \"#{self.name}\" (#{self.email}) was created")
+    log_info("User \"#{self.name}\" (#{self.email}) was created")  
     notification_service.new_user(self, @reset_token) if self.created_by_id
     system_hook_service.execute_hooks_for(self, :create)
+    #iscas_audit
+    record_user_related_operation("createUser")
+
   end
+
 
   def post_destroy_hook
     log_info("User \"#{self.name}\" (#{self.email})  was removed")
     system_hook_service.execute_hooks_for(self, :destroy)
+    #iscas_audit
+    record_user_related_operation("deleteUser")
+
   end
 
   def notification_service
