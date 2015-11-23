@@ -1,4 +1,5 @@
 class DeleteUserService
+  include IscasAuditService
   attr_accessor :current_user
 
   def initialize(current_user)
@@ -17,6 +18,9 @@ class DeleteUserService
       end
 
       user.destroy
+      #iscas_audit
+      record_gitlab_related_operation(current_user,"deleteUser",user.id,user.name,"this is the path")
+      record_gitlab_related_operation(current_user,"deleteUserNamespace",user.id,user.name,"this is the path")
     end
   end
 end

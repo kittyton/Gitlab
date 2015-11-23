@@ -1,7 +1,7 @@
 module Projects
   class DestroyService < BaseService
     include Gitlab::ShellAdapter
-
+    include IscasAuditService
     class DestroyError < StandardError; end
 
     DELETED_FLAG = '+deleted'
@@ -26,9 +26,10 @@ module Projects
           raise_error('Failed to remove wiki repository. Please try again or contact administrator')
         end
       end
-
       log_info("Project \"#{project.name}\" was removed")
       system_hook_service.execute_hooks_for(project, :destroy)
+      #iscas_audit
+      record_gitlab_related_operation(current_user,"removeProject",project.id,project.name,project.path)
       true
     end
 
@@ -45,6 +46,12 @@ module Projects
 
       if gitlab_shell.mv_repository(path, new_path)
         log_info("Repository \"#{path}\" moved to \"#{new_path}\"")
+        #iscas_audit
+        if path.include?".wiki"
+        record_gitlab_related_operation(current_user,"deleteWikiRepository",project.id,project.name,project.path)
+        else
+        record_gitlab_related_operation(current_user,"deleteRepository",project.id,project.name,project.path)
+        end
         GitlabShellWorker.perform_in(5.minutes, :remove_repository, new_path)
       else
         false
