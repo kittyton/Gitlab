@@ -15,9 +15,9 @@ class Spinach::Features::ProjectActiveTab < Spinach::FeatureSteps
     click_link('Attachments')
   end
 
-  # step 'I click the "Snippets" tab' do
-  #   click_link('Snippets')
-  # end
+  step 'I click the "Snippets" tab' do
+    click_link('Snippets')
+  end
 
   step 'I click the "Edit" tab' do
     page.within '.sidebar-subnav' do
