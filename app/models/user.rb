@@ -58,6 +58,9 @@
 
 require 'carrierwave/orm/activerecord'
 require 'file_size_validator'
+require 'net/http' 
+require 'json'
+require 'macaddr'
 
 class User < ActiveRecord::Base
   extend Gitlab::ConfigHelper
@@ -119,7 +122,7 @@ class User < ActiveRecord::Base
   has_many :users_star_projects, dependent: :destroy
   has_many :starred_projects, through: :users_star_projects, source: :project
 
-  has_many :snippets,                 dependent: :destroy, foreign_key: :author_id, class_name: "Snippet"
+  # has_many :snippets,                 dependent: :destroy, foreign_key: :author_id, class_name: "Snippet"
   has_many :project_members,          dependent: :destroy, class_name: 'ProjectMember'
   has_many :issues,                   dependent: :destroy, foreign_key: :author_id
   has_many :notes,                    dependent: :destroy, foreign_key: :author_id
@@ -675,8 +678,7 @@ class User < ActiveRecord::Base
 
   def post_destroy_hook
     log_info("User \"#{self.name}\" (#{self.email})  was removed")
-    system_hook_service.execute_hooks_for(self, :destroy)
-
+    system_hook_service.execute_hooks_for(self, :destroy)  
   end
 
   def notification_service
@@ -758,14 +760,5 @@ class User < ActiveRecord::Base
 
   def can_be_removed?
     !solo_owned_groups.present?
-  end
-
-  def ci_authorized_projects
-    @ci_authorized_projects ||= Ci::Project.where(gitlab_id: authorized_projects)
-  end
-
-  def ci_authorized_runners
-    Ci::Runner.specific.includes(:runner_projects).
-      where(ci_runner_projects: { project_id: ci_authorized_projects } )
   end
 end
