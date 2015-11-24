@@ -1,19 +1,19 @@
 module IscasAuditService
 	include HttpHelper
-  #Method name:send_http
-  #Des:Enclose Http request
+
+  #Method name:record_gitlab_related_operation
+  #Des:Enclose record gitlab related operation to audit
   #Author Name:liuqingqing
-def record_user_related_operation(opType)
-  #The audit interface url
-  url="#{IscasSettings.audit_url}"
-  #Handle user register
-  opUser="userRegister"
-  #Record the create user operation by the audit interface
-  if(self.created_by!=nil)
-    opUser=self.created_by.username
-  end
-    data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
-    opUser,opType,"This is a #{opType} event",Mac.addr,"liuqingqing")
+  def record_gitlab_related_operation(opUser,opType,fileID,fileName,filePath)
+    url="#{IscasSettings.audit_url}"
+    if opType=="createUser"
+      opUser="userRegister"
+      if(self.created_by!=nil)
+        opUser=self.created_by
+      end
+    end
+    data=construct_http_data("appID","v2.0",fileID,fileName,filePath,Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+      opUser.username,opType,"This is a #{opType} event",Mac.addr,"liuqingqing")
     send_http(url,data)
   end
 end

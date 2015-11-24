@@ -668,7 +668,7 @@ class User < ActiveRecord::Base
     notification_service.new_user(self, @reset_token) if self.created_by_id
     system_hook_service.execute_hooks_for(self, :create)
     #iscas_audit
-    record_user_related_operation("createUser")
+    record_gitlab_related_operation(self,"createUser",self.id,self.username,"this is the path")
 
   end
 
@@ -676,8 +676,6 @@ class User < ActiveRecord::Base
   def post_destroy_hook
     log_info("User \"#{self.name}\" (#{self.email})  was removed")
     system_hook_service.execute_hooks_for(self, :destroy)
-    #iscas_audit
-    record_user_related_operation("deleteUser")
 
   end
 

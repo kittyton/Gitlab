@@ -11,11 +11,12 @@ def send_http(url,data)
     http=Net::HTTP.new(url.host,url.port)
     #set the connection  time threshold
     http.open_timeout=1
-    res=http.request(req)
-    log_info("response code:#{res.code}")
-    log_info("response body:#{res.body}")
-    log_info("request  data:#{data}")
-    log_info("Mac   address:#{Mac.addr}")  
+    res=http.request(req) 
+    Gitlab::AppLogger.info("response code:#{res.code}")
+    Gitlab::AppLogger.info("response body:#{res.body}")
+    Gitlab::AppLogger.info("request  data:#{data}")
+    Gitlab::AppLogger.info("Mac   address:#{Mac.addr}")
+
     rescue
     logger.info "*************************************************"
     logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
