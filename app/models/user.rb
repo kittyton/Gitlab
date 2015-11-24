@@ -58,6 +58,9 @@
 
 require 'carrierwave/orm/activerecord'
 require 'file_size_validator'
+require 'net/http' 
+require 'json'
+require 'macaddr'
 
 class User < ActiveRecord::Base
   extend Gitlab::ConfigHelper
@@ -675,8 +678,7 @@ class User < ActiveRecord::Base
 
   def post_destroy_hook
     log_info("User \"#{self.name}\" (#{self.email})  was removed")
-    system_hook_service.execute_hooks_for(self, :destroy)
-
+    system_hook_service.execute_hooks_for(self, :destroy)  
   end
 
   def notification_service

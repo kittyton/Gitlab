@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :require_email, unless: :devise_controller?
 
-  protect_from_forgery with: :exception
+  #protect_from_forgery with: :exception
 
   helper_method :abilities, :can?, :current_application_settings
   helper_method :import_sources_enabled?, :github_import_enabled?, :github_import_configured?, :gitlab_import_enabled?, :gitlab_import_configured?, :bitbucket_import_enabled?, :bitbucket_import_configured?, :gitorious_import_enabled?, :google_code_import_enabled?, :fogbugz_import_enabled?, :git_import_enabled?
@@ -44,7 +44,6 @@ class ApplicationController < ActionController::Base
                    params[:private_token].presence
                  end
     user = user_token && User.find_by_authentication_token(user_token.to_s)
-
     if user
       # Notice we are passing store false, so the user is not
       # actually stored in the session and a token is needed
@@ -63,7 +62,6 @@ class ApplicationController < ActionController::Base
         redirect_to current_application_settings.home_page_url and return
       end
     end
-
     super(*args)
   end
 
