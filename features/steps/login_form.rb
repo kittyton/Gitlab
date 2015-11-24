@@ -1,7 +1,7 @@
 class Spinach::Features::LoginForm < Spinach::FeatureSteps
   include SharedAuthentication
   include SharedPaths
-  include SharedSnippet
+  # include SharedSnippet
   include SharedUser
   include SharedSearch
 

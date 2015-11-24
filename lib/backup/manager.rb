@@ -153,7 +153,7 @@ module Backup
     end
 
     def folders_to_backup
-      folders = %w{repositories db uploads builds}
+      folders = %w{repositories db uploads}
 
       if ENV["SKIP"]
         return folders.reject{ |folder| ENV["SKIP"].include?(folder) }

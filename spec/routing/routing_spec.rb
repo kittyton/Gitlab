@@ -26,43 +26,43 @@ end
 #      snippet GET    /snippets/:id(.:format)      snippets#show
 #          PUT    /snippets/:id(.:format)      snippets#update
 #          DELETE /snippets/:id(.:format)      snippets#destroy
-describe SnippetsController, "routing" do
-  it "to #user_index" do
-    expect(get("/s/User")).to route_to('snippets#index', username: 'User')
-  end
-
-  it "to #raw" do
-    expect(get("/snippets/1/raw")).to route_to('snippets#raw', id: '1')
-  end
-
-  it "to #index" do
-    expect(get("/snippets")).to route_to('snippets#index')
-  end
-
-  it "to #create" do
-    expect(post("/snippets")).to route_to('snippets#create')
-  end
-
-  it "to #new" do
-    expect(get("/snippets/new")).to route_to('snippets#new')
-  end
-
-  it "to #edit" do
-    expect(get("/snippets/1/edit")).to route_to('snippets#edit', id: '1')
-  end
-
-  it "to #show" do
-    expect(get("/snippets/1")).to route_to('snippets#show', id: '1')
-  end
-
-  it "to #update" do
-    expect(put("/snippets/1")).to route_to('snippets#update', id: '1')
-  end
-
-  it "to #destroy" do
-    expect(delete("/snippets/1")).to route_to('snippets#destroy', id: '1')
-  end
-end
+# describe SnippetsController, "routing" do
+#   it "to #user_index" do
+#     expect(get("/s/User")).to route_to('snippets#index', username: 'User')
+#   end
+#
+#   it "to #raw" do
+#     expect(get("/snippets/1/raw")).to route_to('snippets#raw', id: '1')
+#   end
+#
+#   it "to #index" do
+#     expect(get("/snippets")).to route_to('snippets#index')
+#   end
+#
+#   it "to #create" do
+#     expect(post("/snippets")).to route_to('snippets#create')
+#   end
+#
+#   it "to #new" do
+#     expect(get("/snippets/new")).to route_to('snippets#new')
+#   end
+#
+#   it "to #edit" do
+#     expect(get("/snippets/1/edit")).to route_to('snippets#edit', id: '1')
+#   end
+#
+#   it "to #show" do
+#     expect(get("/snippets/1")).to route_to('snippets#show', id: '1')
+#   end
+#
+#   it "to #update" do
+#     expect(put("/snippets/1")).to route_to('snippets#update', id: '1')
+#   end
+#
+#   it "to #destroy" do
+#     expect(delete("/snippets/1")).to route_to('snippets#destroy', id: '1')
+#   end
+# end
 
 #            help GET /help(.:format)                 help#index
 #       help_page GET /help/:category/:file(.:format) help#show {:category=>/.*/, :file=>/[^\/\.]+/}

@@ -65,14 +65,14 @@ describe Gitlab::ReferenceExtractor do
     expect(subject.labels).to eq([@l0, @l1])
   end
 
-  it 'accesses valid snippets' do
-    @s0 = create(:project_snippet, project: project)
-    @s1 = create(:project_snippet, project: project)
-    @s2 = create(:project_snippet)
-
-    subject.analyze("$#{@s0.id}, $999, $#{@s2.id}, $#{@s1.id}")
-    expect(subject.snippets).to eq([@s0, @s1])
-  end
+  # it 'accesses valid snippets' do
+  #   @s0 = create(:project_snippet, project: project)
+  #   @s1 = create(:project_snippet, project: project)
+  #   @s2 = create(:project_snippet)
+  #
+  #   subject.analyze("$#{@s0.id}, $999, $#{@s2.id}, $#{@s1.id}")
+  #   expect(subject.snippets).to eq([@s0, @s1])
+  # end
 
   it 'accesses valid commits' do
     commit = project.commit('master')

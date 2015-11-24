@@ -15,7 +15,8 @@ module Gitlab
       @text = Gitlab::Markdown.render_without_gfm(text)
     end
 
-    %i(user label issue merge_request snippet commit commit_range).each do |type|
+    # %i(user label issue merge_request snippet commit commit_range).each do |type|
+    %i(user label issue merge_request commit commit_range).each do |type|
       define_method("#{type}s") do
         references[type]
       end

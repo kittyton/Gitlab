@@ -15,23 +15,6 @@
 - [Web hooks](web_hooks/web_hooks.md) Let GitLab notify you when new code has been pushed to your project.
 - [Workflow](workflow/README.md) Using GitLab functionality and importing projects from GitHub and SVN.
 
-## CI Documentation
-
-+ [Quick Start](ci/quick_start/README.md)
-+ [Configuring project (.gitlab-ci.yml)](ci/yaml/README.md)
-+ [Configuring runner](ci/runners/README.md)
-+ [Configuring deployment](ci/deployment/README.md)
-+ [Using Docker Images](ci/docker/using_docker_images.md)
-+ [Using Docker Build](ci/docker/using_docker_build.md)
-+ [Using Variables](ci/variables/README.md)
-
-### CI Examples
-
-+ [Test and deploy Ruby applications to Heroku](ci/examples/test-and-deploy-ruby-application-to-heroku.md)
-+ [Test and deploy Python applications to Heroku](ci/examples/test-and-deploy-python-application-to-heroku.md)
-+ [Test Clojure applications](ci/examples/test-clojure-application.md)
-+ Help your favorite programming language and GitLab by sending a merge request with a guide for that language.
-
 ## Administrator documentation
 
 - [Custom git hooks](hooks/custom_hooks.md) Custom git hooks (on the filesystem) for when web hooks aren't enough.

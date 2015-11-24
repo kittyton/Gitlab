@@ -100,7 +100,8 @@
         - if @user.can_be_removed?
           %p Deleting an account has the following effects:
           %ul
-            %li All user content like authored issues, snippets, comments will be removed
+            -#%li All user content like authored issues, snippets, comments will be removed
+            %li All user content like authored issues, comments will be removed
             - rp = current_user.personal_projects.count
             - unless rp.zero?
               %li #{pluralize rp, 'personal project'} will be removed and cannot be restored

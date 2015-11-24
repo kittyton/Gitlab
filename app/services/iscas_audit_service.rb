@@ -7,13 +7,15 @@ module IscasAuditService
   def record_gitlab_related_operation(opUser,opType,fileID,fileName,filePath)
     url="#{IscasSettings.audit_url}"
     if opType=="createUser"
-      opUser="userRegister"
+      opUserName="userRegister"
       if(self.created_by!=nil)
-        opUser=self.created_by
+        opUserName=self.created_by.username
       end
+    else
+      opUserName=opUser.username
     end
     data=construct_http_data("appID","v2.0",fileID,fileName,filePath,Time.now.strftime("%Y-%m-%d %H:%M:%S"),
-      opUser.username,opType,"This is a #{opType} event",Mac.addr,"liuqingqing")
+      opUserName,opType,"This is a #{opType} event",Mac.addr,"liuqingqing")
     send_http(url,data)
   end
 end
