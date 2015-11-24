@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source "https://ruby.taobao.org"
 
 def darwin_only(require_as)
   RUBY_PLATFORM.include?('darwin') && require_as
@@ -18,8 +18,9 @@ gem 'sprockets', '~> 2.12.3'
 gem "default_value_for", "~> 3.0.0"
 
 # Supported DBs
-gem "mysql2", '~> 0.3.16', group: :mysql
+#gem "mysql2", '~> 0.3.18', group: :mysql
 gem "pg", '~> 0.18.2', group: :postgres
+gem "mysql2", '~> 0.3.18'
 
 # Authentication libraries
 gem "devise", '~> 3.5.2'

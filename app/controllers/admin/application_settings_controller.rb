@@ -52,11 +52,10 @@ class Admin::ApplicationSettingsController < Admin::ApplicationController
       :max_attachment_size,
       :session_expire_delay,
       :default_project_visibility,
-      :default_snippet_visibility,
+      #:default_snippet_visibility,
       :restricted_signup_domains_raw,
       :version_check_enabled,
       :user_oauth_applications,
-      :ci_enabled,
       restricted_visibility_levels: [],
       import_sources: []
     )

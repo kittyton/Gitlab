@@ -152,27 +152,27 @@ FactoryGirl.define do
     url
   end
 
-  factory :project_snippet do
-    project
-    author
-    title
-    content
-    file_name
-  end
+  # factory :project_snippet do
+  #   project
+  #   author
+  #   title
+  #   content
+  #   file_name
+  # end
 
-  factory :personal_snippet do
-    author
-    title
-    content
-    file_name
-  end
+  # factory :personal_snippet do
+  #   author
+  #   title
+  #   content
+  #   file_name
+  # end
 
-  factory :snippet do
-    author
-    title
-    content
-    file_name
-  end
+  # factory :snippet do
+  #   author
+  #   title
+  #   content
+  #   file_name
+  # end
 
   factory :protected_branch do
     name

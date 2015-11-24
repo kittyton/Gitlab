@@ -1,5 +1,5 @@
 GEM
-  remote: https://rubygems.org/
+  remote: https://ruby.taobao.org/
   specs:
     CFPropertyList (2.3.1)
     RedCloth (4.2.9)
@@ -854,7 +854,7 @@ DEPENDENCIES
   mail_room (~> 0.5.2)
   minitest (~> 5.7.0)
   mousetrap-rails (~> 1.4.6)
-  mysql2 (~> 0.3.16)
+  mysql2 (~> 0.3.18)
   nested_form (~> 0.3.2)
   newrelic-grape
   newrelic_rpm (~> 3.9.4.245)
@@ -934,3 +934,6 @@ DEPENDENCIES
   webmock (~> 1.21.0)
   whenever (~> 0.8.4)
   wikicloth (= 0.8.1)
+
+BUNDLED WITH
+   1.10.6

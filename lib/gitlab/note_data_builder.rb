@@ -41,8 +41,8 @@ module Gitlab
           data[:issue] = note.noteable.hook_attrs
         elsif note.for_merge_request?
           data[:merge_request] = note.noteable.hook_attrs
-        elsif note.for_project_snippet?
-          data[:snippet] = note.noteable.hook_attrs
+        # elsif note.for_project_snippet?
+        #   data[:snippet] = note.noteable.hook_attrs
         end
 
         data

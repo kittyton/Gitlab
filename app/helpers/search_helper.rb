@@ -59,7 +59,7 @@ module SearchHelper
         { label: "#{prefix} - Issues",         url: namespace_project_issues_path(@project.namespace, @project) },
         { label: "#{prefix} - Merge Requests", url: namespace_project_merge_requests_path(@project.namespace, @project) },
         { label: "#{prefix} - Milestones",     url: namespace_project_milestones_path(@project.namespace, @project) },
-        { label: "#{prefix} - Snippets",       url: namespace_project_snippets_path(@project.namespace, @project) },
+        # { label: "#{prefix} - Snippets",       url: namespace_project_snippets_path(@project.namespace, @project) },
         { label: "#{prefix} - Members",        url: namespace_project_project_members_path(@project.namespace, @project) },
         { label: "#{prefix} - Wiki",           url: namespace_project_wikis_path(@project.namespace, @project) },
       ]

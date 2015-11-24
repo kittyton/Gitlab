@@ -10,14 +10,15 @@ module SharedProject
   # Create a specific project called "Shop"
   step 'I own project "Shop"' do
     @project = Project.find_by(name: "Shop")
-    @project ||= create(:project, name: "Shop", namespace: @user.namespace, snippets_enabled: true)
+    # @project ||= create(:project, name: "Shop", namespace: @user.namespace, snippets_enabled: true)
+    @project ||= create(:project, name: "Shop", namespace: @user.namespace)
     @project.team << [@user, :master]
   end
 
-  step 'I disable snippets in project' do
-    @project.snippets_enabled = false
-    @project.save
-  end
+  # step 'I disable snippets in project' do
+  #   @project.snippets_enabled = false
+  #   @project.save
+  # end
 
   step 'I disable issues and merge requests in project' do
     @project.issues_enabled = false
