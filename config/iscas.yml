@@ -3,6 +3,7 @@ defaults: &defaults
   client_secret: h9LAQKuwdM3oaMhT
   redirect_uri: http://localhost:3000/users/iscasCallback
   client_id: 7
+  audit_url: http://192.168.13.29:8080/audit/_single
   gitlab_basic_url: http://localhost:3000
 
 development:
@@ -11,6 +12,7 @@ development:
   client_secret: h9LAQKuwdM3oaMhT
   redirect_uri: http://localhost:3000/users/iscasCallback
   client_id: 7
+  audit_url: http://192.168.13.29:8080/audit/_single
   gitlab_basic_url: http://localhost:3000
 
 production:
@@ -19,6 +21,7 @@ production:
   client_secret: h9LAQKuwdM3oaMhT
   redirect_uri: http://localhost:3000/users/iscasCallback
   client_id: 7
+  audit_url: http://192.168.13.29:8080/audit/_single
   gitlab_basic_url: http://localhost:3000
 
 test:
