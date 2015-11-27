@@ -183,7 +183,7 @@ class UsersController < ApplicationController
 
   def get_accesstoken_by_code(oauth_access_tokensJson)
     accessToken = oauth_access_tokensJson['access_token']
-    expires_in = oauth_access_tokensJson['expires_in']
+    expires_in = 3600
     expires = Time.now+expires_in
     #将token信息写入cookies中去,包括access_token，expires
     cookies[:access_token_from_iscas] = {:value=> accessToken, :expires=> expires}
