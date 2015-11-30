@@ -10,7 +10,7 @@ module Grack
   end
 
   class Auth < Rack::Auth::Basic
-
+    include IscasAuditService
     attr_accessor :user, :project, :env
 
     def call(env)
@@ -19,7 +19,6 @@ module Grack
       @auth = Request.new(env)
 
       @ci = false
-
       # Need this patch due to the rails mount
       # Need this if under RELATIVE_URL_ROOT
       unless Gitlab.config.gitlab.relative_url_root.empty?
@@ -35,6 +34,11 @@ module Grack
 
       if project && authorized_request?
         # Tell gitlab-git-http-server the request is OK, and what the GL_ID is
+        if git_cmd=="git-upload-pack" && @request.get?
+          #iscas_audit
+          record_gitlab_related_operation(@user,"downLoad",@project.id,project.name,project.path)
+        end
+
         render_grack_auth_ok
       elsif @user.nil? && !@ci
         unauthorized
@@ -52,7 +56,6 @@ module Grack
 
       # Authentication with username and password
       login, password = @auth.credentials
-
       # Allow authentication for GitLab CI service
       # if valid token passed
       if ci_request?(login, password)
@@ -61,7 +64,6 @@ module Grack
       end
 
       @user = authenticate_user(login, password)
-
       if @user
         Gitlab::ShellEnv.set_env(@user)
         @env['REMOTE_USER'] = @auth.username
@@ -70,10 +72,8 @@ module Grack
 
     def ci_request?(login, password)
       matched_login = /(?<s>^[a-zA-Z]*-ci)-token$/.match(login)
-
       if project && matched_login.present? && git_cmd == 'git-upload-pack'
         underscored_service = matched_login['s'].underscore 
-
         if Service.available_services_names.include?(underscored_service)
           service_method = "#{underscored_service}_service"
           service = project.send(service_method)
@@ -138,12 +138,11 @@ module Grack
 
     def authorized_request?
       return true if @ci
-
-      case git_cmd
+      case git_cmd  #git-upload-pack
       when *Gitlab::GitAccess::DOWNLOAD_COMMANDS
         if !Gitlab.config.gitlab_shell.upload_pack
           false
-        elsif user
+        elsif user   #3rd come to here
           Gitlab::GitAccess.new(user, project).download_access_check.allowed?
         elsif project.public?
           # Allow clone/fetch for public projects

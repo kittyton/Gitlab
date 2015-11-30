@@ -12,14 +12,9 @@ def send_http(url,data)
     #set the connection  time threshold
     http.open_timeout=1
     res=http.request(req) 
-    Gitlab::AppLogger.info("response code:#{res.code}")
-    Gitlab::AppLogger.info("response body:#{res.body}")
-    Gitlab::AppLogger.info("request  data:#{data}")
-    Gitlab::AppLogger.info("Mac   address:#{Mac.addr}")
-
     rescue
-    logger.info "*************************************************"
-    logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
+     Rails.logger.info "*************************************************"
+     Rails.logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
     end                                                                                               
 end 
 
