@@ -4,6 +4,60 @@ module API
     before { authenticate! }
 
     resource :users, requirements: { uid: /[0-9]*/, id: /[0-9]*/ } do
+
+       # Create users by JSON. Available for valid user(在访问这个接口时，需要传入用户Token,普通用户即可)
+      #
+      # Parameters:
+      # an JSON Array String like :
+      #"user_info":
+      #   [{"email": "978660922@qq.com","username": "john_smith","name": "John Smith"},
+      #     {"email":"101010101@qq.com","username": "xiaobb","name": "xiaojie"},
+      #      {"email":"jinxia@iscas.ac.cn","username": "liujinxia","name": "liujinxia"}]
+      # Example Request:
+      # POST /users/iscas
+      # Author Name:liujinxia
+
+      post "/iscas" do
+        users_emails = []
+        users_usernames = []       
+
+        if !params[:user_info]
+          conflict!('bad params:  JSON user_info=nil')
+          return
+        end
+        json_array_string = params[:user_info]
+        obj_array = JSON.parse(json_array_string)
+        if obj_array.class != Array
+          conflict!('bad params:  JSON user_info.content is not a json array')
+          return
+        end
+
+        obj_array.each do |obj|
+          required_attributes_user!(obj, ["email", "name", "username"])
+          obj["password"] = obj["email"]
+          new_user = User.build_user(obj)
+          new_user.skip_confirmation!
+
+          if !new_user.save          
+            users_emails.push(new_user[:email]) if User.
+                where(email: new_user.email).
+                count > 0
+            users_usernames.push(new_user[:username]) if User.
+                where(username: new_user.username).
+                count > 0
+          end
+        end
+       
+        if users_emails!=[] || users_usernames!=[]
+            message = "以下email已存在:"+ users_emails.join(",")  +
+                                ";以下uername已存在:"+ users_usernames.join(",") 
+        else
+           message = "success"           
+        end
+         mess = {:message => message}
+         present mess, with: Entities::Message
+      end
+      
       # Get a users list
       #
       # Example Request:

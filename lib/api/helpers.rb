@@ -5,6 +5,19 @@ module API
     SUDO_HEADER ="HTTP_SUDO"
     SUDO_PARAM = :sudo
 
+# Checks the occurrences of required attributes, each attribute must be present in the user hash
+# or a Bad Request error is invoked.
+#
+# Parameters:
+#   user_hash (required) - A hash consisting of a single user infos
+#   keys (required) - A hash consisting of keys that must be present
+# Author Name:liujinxia
+    def required_attributes_user!(user_hash, keys)
+      keys.each do |key|
+        bad_request!(key) unless user_hash[key].present?
+      end
+    end
+    
     def parse_boolean(value)
       [ true, 1, '1', 't', 'T', 'true', 'TRUE', 'on', 'ON' ].include?(value)
     end
