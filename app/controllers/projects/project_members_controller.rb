@@ -1,7 +1,7 @@
 class Projects::ProjectMembersController < Projects::ApplicationController
   # Authorize
   before_action :authorize_admin_project!, except: :leave
-
+  include IscasSearchService
   def index
     @project_members = @project.project_members
     @project_members = @project_members.non_invite unless can?(current_user, :admin_project, @project)
@@ -35,6 +35,10 @@ class Projects::ProjectMembersController < Projects::ApplicationController
 
   def create
     @project.team.add_users(params[:user_ids].split(','), params[:access_level], current_user)
+    #iscas_search
+     users=Array.new
+     users=params[:user_ids].split(",")
+     updateProject(@project.id,users,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
 
     redirect_to namespace_project_project_members_path(@project.namespace, @project)
   end

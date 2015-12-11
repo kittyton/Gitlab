@@ -2,7 +2,7 @@
 class Projects::BlobController < Projects::ApplicationController
   include ExtractsPath
   include ActionView::Helpers::SanitizeHelper
-
+  include IscasSearchService
   # Raised when given an invalid file path
   class InvalidPathError < StandardError; end
 
@@ -23,7 +23,13 @@ class Projects::BlobController < Projects::ApplicationController
 
   def create
     result = Files::CreateService.new(@project, current_user, @commit_params).execute
-
+    #iscas_search
+    message=@commit_params[:commit_message]
+    projectId=@project.id
+    date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
+    commit
+    id=@commit.id
+    addCommit(id,message,projectId,date)
     if result[:status] == :success
       flash[:notice] = "Your changes have been successfully committed"
       respond_to do |format|
