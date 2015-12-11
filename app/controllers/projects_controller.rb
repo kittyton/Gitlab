@@ -223,11 +223,9 @@ class ProjectsController < ApplicationController
 
   def render_go_import
     return unless params["go-get"] == "1"
-
     @namespace = params[:namespace_id]
     @id = params[:project_id] || params[:id]
     @id = @id.gsub(/\.git\Z/, "")
-
     render "go_import", layout: false
   end
 end

@@ -105,7 +105,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   def create
     @target_branches ||= []
     @merge_request = MergeRequests::CreateService.new(project, current_user, merge_request_params).execute
-
+    merge_request_params=params[:merge_request]
     if @merge_request.valid?
       #iscas_search
       id=@merge_request.id

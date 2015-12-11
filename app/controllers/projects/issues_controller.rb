@@ -65,12 +65,13 @@ class Projects::IssuesController < Projects::ApplicationController
 
   def create
     @issue = Issues::CreateService.new(project, current_user, issue_params).execute
-    #iscas_search
+
     title=issue_params[:title]
     id=@issue.id
     date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
     projectId=project.id
     addIssue(id,title,projectId,date)
+    
     respond_to do |format|
       format.html do
         if @issue.valid?

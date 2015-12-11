@@ -1,12 +1,13 @@
 module HttpHelper
-	#Method name:send_http
-  #Des:Enclose Http request
-  #Author Name:liuqingqing
+  require 'net/http'
+  require 'uri'
+#Method name:send_http
+#Des:Enclose Http request
+#Author Name:liuqingqing
 def send_http(url,data)  
     url = URI.parse(url)  
     req = Net::HTTP::Put.new(url.path,{'Content-Type' => 'application/json'})
     req.body = data  
-    #res = Net::HTTP.new(url.host,url.port).start{|http| http.request(req)}
     begin
     http=Net::HTTP.new(url.host,url.port)
     #set the connection  time threshold
@@ -16,7 +17,7 @@ def send_http(url,data)
     Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.body=#{res.body}" 
     Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~request data = #{data}" 
     rescue
-     Rails.logger.info "**********************WRONG***************************"
+     Rails.logger.info "********************WRONG*****************************"
      Rails.logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
     end                                                                                               
 end 
