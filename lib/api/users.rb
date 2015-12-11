@@ -26,7 +26,14 @@ module API
           return
         end
         json_array_string = params[:user_info]
-        obj_array = JSON.parse(json_array_string)
+
+        begin
+          obj_array = JSON.parse(json_array_string)
+          #如果上面的代码执行发生异常就捕获
+        rescue Exception => e
+          render_api_error!(e.message, 400)
+        end
+
         if obj_array.class != Array
           conflict!('bad params:  JSON user_info.content is not a json array')
           return
