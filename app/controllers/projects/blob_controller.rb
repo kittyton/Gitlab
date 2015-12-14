@@ -16,7 +16,6 @@ class Projects::BlobController < Projects::ApplicationController
   before_action :require_branch_head, only: [:edit, :update]
   before_action :editor_variables, except: [:show, :preview, :diff]
   before_action :after_edit_path, only: [:edit, :update]
-  include IscasSearchService
   def new
     commit unless @repository.empty?
   end
