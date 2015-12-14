@@ -5,6 +5,69 @@ module API
 
     resource :users, requirements: { uid: /[0-9]*/, id: /[0-9]*/ } do
 
+      # Create users by emails only . Available for valid user(在访问这个接口时，需要传入用户Token,普通用户即可)
+      #
+      # Parameters:
+      # an JSON Array String like :
+      #"user_emails":
+      #   [{"email": "123456789@qq.com"},
+      #    {"email":"987654321@qq.com"},
+      #    {"email":"hahaha@iscas.ac.cn"}]
+      # Example Request:
+      # POST /users/iscas_emails
+      # Author Name:liujinxia
+
+      post "/iscas_emails" do
+        users_emails = []
+        users_usernames = []       
+
+        if !params[:user_emails]
+          conflict!('bad params:  JSON user_emails=nil')
+          return
+        end
+        json_array_string = params[:user_emails]
+
+        begin
+          obj_array = JSON.parse(json_array_string)
+          #如果上面的代码执行发生异常就捕获
+        rescue Exception => e
+          render_api_error!(e.message, 400)
+        end
+
+        if obj_array.class != Array
+          conflict!('bad params:  JSON user_emails.content is not a json array')
+          return
+        end
+
+        obj_array.each do |obj|
+          required_attributes_user!(obj, ["email"])
+          obj["password"] = obj["email"]
+          obj["username"] = obj["email"].split("@")[0]
+          obj["name"] = obj["username"]
+          new_user = User.build_user(obj)
+          new_user.skip_confirmation!
+
+          if !new_user.save          
+            users_emails.push(new_user[:email]) if User.
+                where(email: new_user.email).
+                count > 0
+            users_usernames.push(new_user[:username]) if User.
+                where(username: new_user.username).
+                count > 0
+          end
+        end
+       
+        if users_emails!=[] || users_usernames!=[]
+            message = "以下email已存在:"+ users_emails.join(",")  +
+                                ";以下uername已存在:"+ users_usernames.join(",") 
+        else
+           message = "success"           
+        end
+         mess = {:message => message}
+         present mess, with: Entities::Message
+      end
+
+
        # Create users by JSON. Available for valid user(在访问这个接口时，需要传入用户Token,普通用户即可)
       #
       # Parameters:
