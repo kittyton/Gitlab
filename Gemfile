@@ -10,6 +10,9 @@ end
 
 gem 'rails', '4.1.12'
 
+# use json
+gem 'json'
+
 # Specify a sprockets version due to security issue
 # See https://groups.google.com/forum/#!topic/rubyonrails-security/doAVp0YaTqY
 gem 'sprockets', '~> 2.12.3'

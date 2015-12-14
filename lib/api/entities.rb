@@ -1,5 +1,10 @@
 module API
   module Entities
+
+    class Message < Grape::Entity
+      expose :message
+    end
+
     class UserSafe < Grape::Entity
       expose :name, :username
     end

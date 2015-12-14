@@ -849,6 +849,7 @@ DEPENDENCIES
   jquery-scrollto-rails (~> 1.4.3)
   jquery-turbolinks (~> 2.0.1)
   jquery-ui-rails (~> 4.2.1)
+  json
   kaminari (~> 0.15.1)
   letter_opener (~> 1.1.2)
   mail_room (~> 0.5.2)
