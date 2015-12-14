@@ -7,7 +7,7 @@ class ProjectsController < ApplicationController
   # Authorize
   before_action :authorize_admin_project!, only: [:edit, :update, :destroy, :transfer, :archive, :unarchive]
   before_action :event_filter, only: [:show, :activity]
-
+  include IscasSearchService
   layout :determine_layout
 
   def index
@@ -26,6 +26,10 @@ class ProjectsController < ApplicationController
     @project = ::Projects::CreateService.new(current_user, project_params).execute
 
     if @project.saved?
+      #iscas_search
+       user=["#{@project.creator.id}"]
+       addProject(@project.id,@project.name,user,@project.description,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
+
       redirect_to(
         project_path(@project),
         notice: "Project '#{@project.name}' was successfully created."
@@ -219,11 +223,9 @@ class ProjectsController < ApplicationController
 
   def render_go_import
     return unless params["go-get"] == "1"
-
     @namespace = params[:namespace_id]
     @id = params[:project_id] || params[:id]
     @id = @id.gsub(/\.git\Z/, "")
-
     render "go_import", layout: false
   end
 end

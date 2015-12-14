@@ -13,7 +13,7 @@ class Projects::IssuesController < Projects::ApplicationController
 
   # Allow issues bulk update
   before_action :authorize_admin_issues!, only: [:bulk_update]
-
+  include IscasSearchService
   respond_to :html
 
   def index
@@ -66,6 +66,12 @@ class Projects::IssuesController < Projects::ApplicationController
   def create
     @issue = Issues::CreateService.new(project, current_user, issue_params).execute
 
+    title=issue_params[:title]
+    id=@issue.id
+    date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
+    projectId=project.id
+    addIssue(id,title,projectId,date)
+    
     respond_to do |format|
       format.html do
         if @issue.valid?
