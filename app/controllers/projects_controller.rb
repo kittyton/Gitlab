@@ -27,9 +27,11 @@ class ProjectsController < ApplicationController
 
     if @project.saved?
       #iscas_search
-       user=["#{@project.creator.id}"]
-       addProject(@project.id,@project.name,user,@project.description,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
-
+      enableSearch=IscasSettings.enableSearch
+      if enableSearch==true
+         user=["#{@project.creator.email}"]
+         addProject(@project.id,@project.name,user,@project.description,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
+      end
       redirect_to(
         project_path(@project),
         notice: "Project '#{@project.name}' was successfully created."

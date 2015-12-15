@@ -108,12 +108,14 @@ class Projects::MergeRequestsController < Projects::ApplicationController
     merge_request_params=params[:merge_request]
     if @merge_request.valid?
       #iscas_search
-      id=@merge_request.id
-      title="#{merge_request_params[:title]}"
-      date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
-      projectId=merge_request_params[:target_project_id]
-      addMergeRequest(id,title,projectId,date)
-
+      enableSearch=IscasSettings.enableSearch
+      if enableSearch==true
+        id=@merge_request.id
+        title="#{merge_request_params[:title]}"
+        date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
+        projectId=merge_request_params[:target_project_id]
+        addMergeRequest(id,title,projectId,date)
+      end
       redirect_to(merge_request_path(@merge_request))
     else
       @source_project = @merge_request.source_project

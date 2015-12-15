@@ -38,10 +38,17 @@ class Projects::ProjectMembersController < Projects::ApplicationController
     @project.team.add_users(params[:user_ids].split(','), params[:access_level], current_user)
      
      #iscas_search
-     users=Array.new
-     users=params[:user_ids].split(",")
-     updateProject(@project.id,users,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
-
+     enableSearch=IscasSettings.enableSearch
+     if enableSearch==true
+      userIds=Array.new
+      emails=Array.new
+      userIds=params[:user_ids].split(",")
+      userIds.each{
+       |id| email= User.find_by(id:id).email
+       emails.push(email)
+     }
+      updateProject(@project.id,emails,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
+     end
     redirect_to namespace_project_project_members_path(@project.namespace, @project)
   end
 
