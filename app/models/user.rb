@@ -671,8 +671,11 @@ class User < ActiveRecord::Base
     notification_service.new_user(self, @reset_token) if self.created_by_id
     system_hook_service.execute_hooks_for(self, :create)
     #iscas_audit
-    record_gitlab_related_operation(self,"createUser",self.id,self.username,"this is the path")
-
+    enableAudit=IscasSettings.enableAudit
+    Rails.logger.info "****************************************** enableAudit=#{enableAudit}"
+    if enableAudit==true
+      record_gitlab_related_operation(self,"createUser",self.id,self.username,"this is the path")
+    end
   end
 
 

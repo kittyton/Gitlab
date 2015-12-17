@@ -19,8 +19,11 @@ class DeleteUserService
 
       user.destroy
       #iscas_audit
-      record_gitlab_related_operation(current_user,"deleteUser",user.id,user.name,"this is the path")
-      record_gitlab_related_operation(current_user,"deleteUserNamespace",user.id,user.name,"this is the path")
+      enableAudit=IscasSettings.enableAudit
+      if enableAudit==true
+        record_gitlab_related_operation(current_user,"deleteUser",user.id,user.name,"this is the path")
+        record_gitlab_related_operation(current_user,"deleteUserNamespace",user.id,user.name,"this is the path")
+      end
     end
   end
 end

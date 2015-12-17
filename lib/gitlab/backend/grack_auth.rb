@@ -36,7 +36,10 @@ module Grack
         # Tell gitlab-git-http-server the request is OK, and what the GL_ID is
         if git_cmd=="git-upload-pack" && @request.get?
           #iscas_audit
-          record_gitlab_related_operation(@user,"downLoad",@project.id,project.name,project.path)
+          enableAudit=IscasSettings.enableAudit
+          if enableAudit==true
+            record_gitlab_related_operation(@user,"downLoad",@project.id,project.name,project.path)
+          end
         end
 
         render_grack_auth_ok

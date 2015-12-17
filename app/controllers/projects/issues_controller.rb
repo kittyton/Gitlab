@@ -69,10 +69,16 @@ class Projects::IssuesController < Projects::ApplicationController
     enableSearch=IscasSettings.enableSearch
     if enableSearch==true
       title=issue_params[:title]
+      des=issue_params[:description]
+      if issue_params[:assignee_id]==""
+        assignTo="Unassigned"
+      else
+        assignTo=User.find_by(id:issue_params[:assignee_id]).email
+      end
       id=@issue.id
       date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
       projectId=project.id
-      addIssue(id,title,projectId,date)
+      addIssue(id,title,des,assignTo,projectId,date)
     end
     respond_to do |format|
       format.html do

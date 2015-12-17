@@ -11,7 +11,7 @@ def send_http(url,data)
     begin
     http=Net::HTTP.new(url.host,url.port)
     #set the connection  time threshold
-    http.open_timeout=1
+    #http.open_timeout=1
     res=http.request(req)
     Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.code=#{res.code}"
     Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.body=#{res.body}" 
@@ -20,7 +20,50 @@ def send_http(url,data)
      Rails.logger.info "********************WRONG*****************************"
      Rails.logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
     end                                                                                               
-end 
+end
+
+
+#Method Name:delete_http
+#Des: Enclose delete request without body
+#Author Name:liuqingqing
+def delete_http(url,data)
+  uri = URI.parse(url)
+  path="#{url}/#{data}"
+  req = Net::HTTP::Delete.new(path) 
+  begin
+    http=Net::HTTP.new(uri.host,uri.port)
+    #set the connection  time threshold
+    #http.open_timeout=1
+    res=http.request(req)
+    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.code=#{res.code}"
+    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.body=#{res.body}" 
+    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~request data = #{data}" 
+    rescue
+     Rails.logger.info "********************WRONG*****************************"
+     Rails.logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
+    end       
+end
+
+#Method Name:delete_http
+#Des: Enclose delete request with body
+#Author Name:liuqingqing
+def delete_http_with_body(url,data)
+  url = URI.parse(url)  
+  req = Net::HTTP::Delete.new(url.path,{'Content-Type' => 'application/json'})
+  req.body = data  
+  begin
+    http=Net::HTTP.new(url.host,url.port)
+    #set the connection  time threshold
+    #http.open_timeout=1
+    res=http.request(req)
+    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.code=#{res.code}"
+    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.body=#{res.body}" 
+    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~request data = #{data}" 
+    rescue
+     Rails.logger.info "********************WRONG*****************************"
+     Rails.logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
+    end                                                                             
+end
 
 #Method Name:construct_http_data
 #Des:Enclose http request params
@@ -66,11 +109,14 @@ end
 #Method Name:construct_add_mergeRequest_data
 #Des: Enclose the add mergeRequest related http request params
 #Author Name:liuqingqing
-def construct_add_mergeRequest_data(id,title,projectId,date)
+def construct_add_mergeRequest_data(id,title,assignTo,status,projectId,des,date)
   data={
          "id"=>id,
          "title"=>title,
+         "assignto"=>assignTo,
+         "status"=>status,
          "projectid"=>projectId,
+         "description"=>des,
          "commitdate"=>date}.to_json
 
 end
@@ -90,12 +136,23 @@ end
 #Method Name:construct_add_issue_data
 #Des: Enclose the add issue related http request params
 #Author Name:liuqingqing
-def construct_add_issue_data(id,title,projectId,date)
+def construct_add_issue_data(id,title,des,assignTo,projectId,date)
  data={
          "id"=>id,
          "title"=>title,
+         "description"=>des,
+         "assignto"=>assignTo,
          "projectid"=>projectId,
          "commitdate"=>date}.to_json
+end
+
+#Method Name:construct_delete_data
+#Des: Enclose the delete data of issue mergeRequest commit
+#Author Name: liuqingqing
+def construct_delete_data(id,projectId)
+  data={
+         "id"=>id,  
+         "projectid"=>projectId}.to_json
 end
 
 end
