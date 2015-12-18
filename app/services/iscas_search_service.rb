@@ -55,14 +55,31 @@ module IscasSearchService
   delete_http(url,id)
  end
 
+ #Method name:deleteIssue
+ #Des:Enclose the deleteIssue operation to search interface
+ #Author Name:liuqingqing
  def deleteIssue(id,projectId)
   url="#{IscasSettings.codeSearch_url}/issue/delete"
   data=construct_delete_data(id,projectId)
   delete_http_with_body(url,data)
  end
 
+
+ #Method name:deleteMergeRequest
+ #Des:Enclose the deleteMergeRequest operation to search interface
+ #Author Name:liuqingqing
  def deleteMergeRequest(id,projectId)
   url="#{IscasSettings.codeSearch_url}/merge/delete"
+  data=construct_delete_data(id,projectId)
+  delete_http_with_body(url,data)
+ end
+
+
+ #Method name:deleteCommit
+ #Des:Enclose the deleteCommit operation to search interface
+ #Author Name:liuqingqing
+ def deleteCommit(id,projectId)
+  url="#{IscasSettings.codeSearch_url}/commit/delete"
   data=construct_delete_data(id,projectId)
   delete_http_with_body(url,data)
  end
