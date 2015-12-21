@@ -11,14 +11,9 @@ def send_http(url,data)
     begin
     http=Net::HTTP.new(url.host,url.port)
     #set the connection  time threshold
-    #http.open_timeout=1
+    http.open_timeout=1
     res=http.request(req)
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.code=#{res.code}"
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.body=#{res.body}" 
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~request data = #{data}" 
     rescue
-     Rails.logger.info "********************WRONG*****************************"
-     Rails.logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
     end                                                                                               
 end
 
@@ -33,14 +28,9 @@ def delete_http(url,data)
   begin
     http=Net::HTTP.new(uri.host,uri.port)
     #set the connection  time threshold
-    #http.open_timeout=1
+    http.open_timeout=1
     res=http.request(req)
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.code=#{res.code}"
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.body=#{res.body}" 
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~request data = #{data}" 
     rescue
-     Rails.logger.info "********************WRONG*****************************"
-     Rails.logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
     end       
 end
 
@@ -54,14 +44,9 @@ def delete_http_with_body(url,data)
   begin
     http=Net::HTTP.new(url.host,url.port)
     #set the connection  time threshold
-    #http.open_timeout=1
+    http.open_timeout=1
     res=http.request(req)
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.code=#{res.code}"
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~res.body=#{res.body}" 
-    Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~request data = #{data}" 
     rescue
-     Rails.logger.info "********************WRONG*****************************"
-     Rails.logger.info "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  #{$!}"
     end                                                                             
 end
 
