@@ -282,7 +282,6 @@ class Project < ActiveRecord::Base
   def add_import_job
     if forked?
        unless RepositoryForkWorker.perform_async(id, forked_from_project.path_with_namespace, self.namespace.path)
-281	286
         import_fail
       end
     else
