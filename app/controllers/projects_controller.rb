@@ -27,9 +27,11 @@ class ProjectsController < ApplicationController
 
     if @project.saved?
       #iscas_search
-       user=["#{@project.creator.id}"]
-       addProject(@project.id,@project.name,user,@project.description,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
-
+      enableSearch=IscasSettings.enableSearch
+      if enableSearch==true
+         user=["#{@project.creator.email}"]
+         addProject(@project.id,@project.name,user,@project.description,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
+      end
       redirect_to(
         project_path(@project),
         notice: "Project '#{@project.name}' was successfully created."
@@ -111,8 +113,38 @@ class ProjectsController < ApplicationController
   def destroy
     return access_denied! unless can?(current_user, :remove_project, @project)
 
+    #iscas_search
+    pid=@project.id
+    issues=Issue.find_by_sql("SELECT * FROM issues WHERE project_id=#{pid}")
+    mergeRequests=MergeRequest.find_by_sql("SELECT * FROM merge_requests WHERE target_project_id=#{pid}")  
+
     ::Projects::DestroyService.new(@project, current_user, {}).execute
     flash[:alert] = "Project '#{@project.name}' was deleted."
+    
+    #iscas_search
+    enableSearch=IscasSettings.enableSearch
+    if enableSearch==true
+     #delete releated issue
+      if issues.empty?
+      else
+       issues.each {
+      |issue| id=issue.id
+      deleteIssue(id,pid)
+    }
+      end
+
+      #delete releated mergeRequest
+      if mergeRequests.empty?
+      else
+        mergeRequests.each{
+          |mergeRequest| mid=mergeRequest.id
+          deleteMergeRequest(mid,pid)
+        }
+      end
+      #delete project
+      deleteProject(pid)
+      
+    end
 
     if request.referer.include?('/admin')
       redirect_to admin_namespaces_projects_path

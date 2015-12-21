@@ -65,13 +65,21 @@ class Projects::IssuesController < Projects::ApplicationController
 
   def create
     @issue = Issues::CreateService.new(project, current_user, issue_params).execute
-
-    title=issue_params[:title]
-    id=@issue.id
-    date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
-    projectId=project.id
-    addIssue(id,title,projectId,date)
-    
+    #iscas_search
+    enableSearch=IscasSettings.enableSearch
+    if enableSearch==true
+      title=issue_params[:title]
+      des=issue_params[:description]
+      if issue_params[:assignee_id]==""
+        assignTo="Unassigned"
+      else
+        assignTo=User.find_by(id:issue_params[:assignee_id]).email
+      end
+      id=@issue.id
+      date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
+      projectId=project.id
+      addIssue(id,title,des,assignTo,projectId,date)
+    end
     respond_to do |format|
       format.html do
         if @issue.valid?

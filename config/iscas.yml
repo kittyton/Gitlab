@@ -4,7 +4,9 @@ defaults: &defaults
   redirect_uri: http://localhost:3000/users/iscasCallback
   client_id: 7
   audit_url: http://192.168.13.29:8080/audit/_single
-  codeSearch_url: http://192.168.5.1:8080/codesearch/v1/code
+  codeSearch_url: http://124.16.139.227:8080/secsearch/v2/index/code
+  enableAudit: true
+  enableSearch : true
   gitlab_basic_url: http://localhost:3000
 
 development:
@@ -14,7 +16,9 @@ development:
   redirect_uri: http://localhost:3000/users/iscasCallback
   client_id: 7
   audit_url: http://192.168.13.29:8080/audit/_single
-  codeSearch_url: http://192.168.5.1:8080/codesearch/v1/code
+  codeSearch_url: http://124.16.139.227:8080/secsearch/v2/index/code
+  enableAudit: true
+  enableSearch : true
   gitlab_basic_url: http://localhost:3000
 
 production:
@@ -24,7 +28,9 @@ production:
   redirect_uri: http://localhost:3000/users/iscasCallback
   client_id: 7
   audit_url: http://192.168.13.29:8080/audit/_single
-  codeSearch_url: http://192.168.5.1:8080/codesearch/v1/code
+  codeSearch_url: http://124.16.139.227:8080/secsearch/v2/index/code
+  enableAudit: true
+  enableSearch : true
   gitlab_basic_url: http://localhost:3000
 
 test:

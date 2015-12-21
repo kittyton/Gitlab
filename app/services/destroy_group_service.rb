@@ -16,8 +16,10 @@ class DestroyGroupService
     
     @group.destroy
     #iscas_audit
-    record_gitlab_related_operation(current_user,"deleteGroupNamespace",@group.id,@group.name,@group.path)
-
+    enableAudit=IscasSettings.enableAudit
+    if enableAudit==true
+        record_gitlab_related_operation(current_user,"deleteGroupNamespace",@group.id,@group.name,@group.path)
+    end
 
 
   end

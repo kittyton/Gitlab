@@ -23,13 +23,15 @@ class Projects::BlobController < Projects::ApplicationController
   def create
     result = Files::CreateService.new(@project, current_user, @commit_params).execute
     #iscas_search
-    message=@commit_params[:commit_message]
-    projectId=@project.id
-    date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
-    commit
-    id=@commit.id
-    addCommit(id,message,projectId,date)
-    
+     enableSearch=IscasSettings.enableSearch
+     if enableSearch==true
+      message=@commit_params[:commit_message]
+      projectId=@project.id
+      date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
+      commit
+      id=@commit.id
+      addCommit(id,message,projectId,date)
+     end
     if result[:status] == :success
       flash[:notice] = "Your changes have been successfully committed"
       respond_to do |format|
@@ -80,11 +82,18 @@ class Projects::BlobController < Projects::ApplicationController
   end
 
   def destroy
+    commit
+    id=@commit.id
     result = Files::DeleteService.new(@project, current_user, @commit_params).execute
 
     if result[:status] == :success
       flash[:notice] = "Your changes have been successfully committed"
-      redirect_to namespace_project_tree_path(@project.namespace, @project, @target_branch)
+      #iscas_search
+       enableSearch=IscasSettings.enableSearch
+       if enableSearch==true
+        deleteCommit(id,@project.id)
+       end
+       redirect_to namespace_project_tree_path(@project.namespace, @project, @target_branch)
     else
       flash[:alert] = result[:message]
       render :show
