@@ -1,0 +1,17 @@
+%h1 Listing iscas
+
+%table
+  %tr
+    %th
+    %th
+    %th
+
+  - @iscas.each do |isca|
+    %tr
+      %td= link_to 'Show', isca
+      %td= link_to 'Edit', edit_isca_path(isca)
+      %td= link_to 'Destroy', isca, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Isca', new_isca_path
