@@ -4,7 +4,10 @@ class ProjectWebHookWorker
   sidekiq_options queue: :project_web_hook
 
   def perform(hook_id, data, hook_name)
+  	
     data = data.with_indifferent_access
+    
+    #add data in web_hook to return the data value
     WebHook.find(hook_id).execute(data, hook_name)
   end
 end

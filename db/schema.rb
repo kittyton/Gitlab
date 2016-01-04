@@ -11,10 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150920161119) do
-
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+ActiveRecord::Schema.define(version: 20151229033756) do
 
   create_table "abuse_reports", force: true do |t|
     t.integer  "reporter_id"
@@ -787,6 +784,7 @@ ActiveRecord::Schema.define(version: 20150920161119) do
     t.boolean  "tag_push_events",         default: false
     t.boolean  "note_events",             default: false,         null: false
     t.boolean  "enable_ssl_verification", default: true
+    t.integer  "task_id"
   end
 
   add_index "web_hooks", ["created_at", "id"], name: "index_web_hooks_on_created_at_and_id", using: :btree
