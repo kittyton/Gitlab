@@ -87,7 +87,10 @@ module Projects
     def after_create_actions
       log_info("#{@project.owner.name} created a new project \"#{@project.name_with_namespace}\"")
       #iscas_audit
-      record_gitlab_related_operation(@project.creator,"createProject",@project.id,@project.name,@project.path)
+      enableAudit=IscasSettings.enableAudit
+      if enableAudit==true
+        record_gitlab_related_operation(@project.creator,"createProject",@project.id,@project.name,@project.path)
+      end
       @project.create_wiki if @project.wiki_enabled?
 
       @project.build_missing_services

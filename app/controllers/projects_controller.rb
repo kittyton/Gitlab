@@ -7,7 +7,7 @@ class ProjectsController < ApplicationController
   # Authorize
   before_action :authorize_admin_project!, only: [:edit, :update, :destroy, :transfer, :archive, :unarchive]
   before_action :event_filter, only: [:show, :activity]
-
+  include IscasSearchService
   layout :determine_layout
 
   def index
@@ -26,6 +26,12 @@ class ProjectsController < ApplicationController
     @project = ::Projects::CreateService.new(current_user, project_params).execute
 
     if @project.saved?
+      #iscas_search
+      enableSearch=IscasSettings.enableSearch
+      if enableSearch==true
+         user=["#{@project.creator.email}"]
+         addProject(@project.id,@project.name,user,@project.description,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
+      end
       redirect_to(
         project_path(@project),
         notice: "Project '#{@project.name}' was successfully created."
@@ -107,8 +113,38 @@ class ProjectsController < ApplicationController
   def destroy
     return access_denied! unless can?(current_user, :remove_project, @project)
 
+    #iscas_search
+    pid=@project.id
+    issues=Issue.find_by_sql("SELECT * FROM issues WHERE project_id=#{pid}")
+    mergeRequests=MergeRequest.find_by_sql("SELECT * FROM merge_requests WHERE target_project_id=#{pid}")  
+
     ::Projects::DestroyService.new(@project, current_user, {}).execute
     flash[:alert] = "Project '#{@project.name}' was deleted."
+    
+    #iscas_search
+    enableSearch=IscasSettings.enableSearch
+    if enableSearch==true
+     #delete releated issue
+      if issues.empty?
+      else
+       issues.each {
+      |issue| id=issue.id
+      deleteIssue(id,pid)
+    }
+      end
+
+      #delete releated mergeRequest
+      if mergeRequests.empty?
+      else
+        mergeRequests.each{
+          |mergeRequest| mid=mergeRequest.id
+          deleteMergeRequest(mid,pid)
+        }
+      end
+      #delete project
+      deleteProject(pid)
+      
+    end
 
     if request.referer.include?('/admin')
       redirect_to admin_namespaces_projects_path
@@ -219,11 +255,9 @@ class ProjectsController < ApplicationController
 
   def render_go_import
     return unless params["go-get"] == "1"
-
     @namespace = params[:namespace_id]
     @id = params[:project_id] || params[:id]
     @id = @id.gsub(/\.git\Z/, "")
-
     render "go_import", layout: false
   end
 end

@@ -30,7 +30,10 @@ class GroupsController < Groups::ApplicationController
     if @group.save
       @group.add_owner(current_user)
       #iscas_audit
-      record_gitlab_related_operation(current_user,"createGroup",@group.id,@group.name,@group.path)
+      enableAudit=IscasSettings.enableAudit
+      if enableAudit==true
+        record_gitlab_related_operation(current_user,"createGroup",@group.id,@group.name,@group.path)
+      end
       redirect_to @group, notice: "Group '#{@group.name}' was successfully created."
     else
       render action: "new"
@@ -91,7 +94,10 @@ class GroupsController < Groups::ApplicationController
   def destroy
     DestroyGroupService.new(@group, current_user).execute
     #iscas_audit
-    record_gitlab_related_operation(current_user,"deleteGroup",@group.id,@group.name,@group.path)
+     enableAudit=IscasSettings.enableAudit
+     if enableAudit==true
+      record_gitlab_related_operation(current_user,"deleteGroup",@group.id,@group.name,@group.path)
+     end
     redirect_to root_path, alert: "Group '#{@group.name} was deleted."
   end
 
