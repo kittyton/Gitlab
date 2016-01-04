@@ -23,15 +23,15 @@ development:
 
 production:
   <<: *defaults
-  network_basic_url: https://124.16.141.142
-  client_secret: h9LAQKuwdM3oaMhT
-  redirect_uri: http://localhost:3000/users/iscasCallback
-  client_id: 7
+  network_basic_url: https://36.110.46.196:5989
+  client_secret: L4G5pAjImDj6mHIW
+  redirect_uri: http://36.110.46.196:5993/users/iscasCallback
+  client_id: gitlab107
   audit_url: http://192.168.13.29:8080/audit/_single
   codeSearch_url: http://124.16.139.227:8080/secsearch/v2/index/code
-  enableAudit: true
-  enableSearch : true
-  gitlab_basic_url: http://localhost:3000
+  enableAudit: false
+  enableSearch : false
+  gitlab_basic_url: http://36.110.46.196:5993
 
 test:
   <<: *defaults
