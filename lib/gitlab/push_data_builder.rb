@@ -33,8 +33,42 @@ module Gitlab
         commit_attrs = commits_limited.map(&:hook_attrs)
 
         type = Gitlab::Git.tag_ref?(ref) ? "tag_push" : "push"
+        
+        tag_push_events_value = true
+        tag_push_type = "ProjectHook"
+
+        tag_push_hook = WebHook.where(project_id: project.id, tag_push_events: tag_push_events_value, type: tag_push_type)
+        Rails.logger.info "tag_push_hook is #{tag_push_hook}"
+        Rails.logger.info "tag_push_hook.id is #{tag_push_hook.first.task_id}"
+
+        #data value:
+        if tag_push_hook == nil
+          back_cmd = "cmd"
+          back_account = "account"
+          back_password = "password"
+          back_task_id = tag_push_hook.first.task_id
+          back_content = "content"
+          back_callback = nil
+        end
+
+        back_cmd = "cmd"
+        back_account = "account"
+        back_password = "password"
+        back_task_id = tag_push_hook.first.task_id
+        back_content = "content"
+        back_callback = nil
+        
         # Hash to be passed as post_receive_data
         data = {
+          #change task_id to data and add task_id in String data 
+          data: {
+            cmd: back_cmd,
+            account: back_account,
+            password: back_password,
+            task_id: back_task_id,
+            content: back_content,
+            callback: back_callback
+          },
           object_kind: type,
           before: oldrev,
           after: newrev,

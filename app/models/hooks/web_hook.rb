@@ -19,6 +19,7 @@
 class WebHook < ActiveRecord::Base
   include Sortable
   include HTTParty
+  require "open-uri" 
 
   default_value_for :push_events, true
   default_value_for :issues_events, false
@@ -35,35 +36,66 @@ class WebHook < ActiveRecord::Base
 
   def execute(data, hook_name)
     parsed_url = URI.parse(url)
-    if parsed_url.userinfo.blank?
-      WebHook.post(url,
-                   body: data.to_json,
-                   headers: {
-                     "Content-Type" => "application/json",
-                     "X-Gitlab-Event" => hook_name.singularize.titleize
-                   },
-                   verify: enable_ssl_verification)
+    Rails.logger.info "data is #{data}"
+    Rails.logger.info "hook_name is #{hook_name}"
+    Rails.logger.info "@@@@@@@@@start send@@@@@@@@@@"
+    Rails.logger.info "data is #{data.to_json}"
+    task_id = data[:data][:task_id]
+    Rails.logger.info "task_id is #{task_id}"
+
+    data[:data] = data[:data].to_json
+    Rails.logger.info "data is #{data}"
+
+    if task_id != nil
+      Rails.logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      Rails.logger.info "start WebHook now!!!"
+      res = Net::HTTP.post_form(parsed_url, data)
+      puts res.body
+      Rails.logger.info "+++++++++++++++++++++++++++++++++++++++++++++++++++"
     else
-      post_url = url.gsub("#{parsed_url.userinfo}@", "")
-      auth = {
-        username: URI.decode(parsed_url.user),
-        password: URI.decode(parsed_url.password),
-      }
-      WebHook.post(post_url,
-                   body: data.to_json,
-                   headers: {
-                     "Content-Type" => "application/json",
-                     "X-Gitlab-Event" => hook_name.singularize.titleize
-                   },
-                   verify: enable_ssl_verification,
-                   basic_auth: auth)
+      if parsed_url.userinfo.blank?
+        Rails.logger.info "start WebHook origin !!!"
+        Rails.logger.info "-------------------------------------------------"
+        WebHook.post(url,
+                     body: data.to_json,
+                     headers: {
+                       "Content-Type" => "application/json",
+                       "X-Gitlab-Event" => hook_name.singularize.titleize
+                     },
+                     verify: enable_ssl_verification)
+        Rails.logger.info "finish webhook origin!!!!!"
+        Rails.logger.info "-------------------------------------------------"
+      else
+        Rails.logger.info "-------------------------------------------------"
+        Rails.logger.info "start else WebHook origin!!!"
+        post_url = url.gsub("#{parsed_url.userinfo}@", "")
+        auth = {
+          username: URI.decode(parsed_url.user),
+          password: URI.decode(parsed_url.password),
+        }
+        WebHook.post(post_url,
+                     body: data.to_json,
+                     headers: {
+                       "Content-Type" => "application/json",
+                       "X-Gitlab-Event" => hook_name.singularize.titleize
+                     },
+                     verify: enable_ssl_verification,
+                     basic_auth: auth)
+        Rails.logger.info "finish else webhook!!!!!"
+        Rails.logger.info "**************************************************"
+      end
     end
+
+    
+
+    
   rescue SocketError, Errno::ECONNRESET, Errno::ECONNREFUSED, Net::OpenTimeout => e
     logger.error("WebHook Error => #{e}")
     false
   end
 
   def async_execute(data, hook_name)
+    Rails.logger.info "start 1!!!!!!!!!1"
     Sidekiq::Client.enqueue(ProjectWebHookWorker, id, data, hook_name)
   end
 end
