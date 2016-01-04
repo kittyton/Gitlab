@@ -14,14 +14,5 @@
         Read more about role permissions
         %strong= link_to "here", help_page_path("permissions", "permissions"), class: "vlink"
 
-    .form-group
-    = f.label :deadline, "Deadline", class: 'control-label'
-    .col-sm-10
-      = f.date_select :deadline , {:start_year => 2015}, class: "project-access-select select2"
-      /= select_tag :deadline, options_for_select(ProjectMember.member_deadline, @project_member.deadline), class: "project-access-select select2"
-      /.help-block
-      /  Read more about role permissions
-      /  %strong= link_to "here", help_page_path("permissions", "permissions"), class: "vlink"
-
   .form-actions
     = f.submit 'Add users to project', class: "btn btn-create"
