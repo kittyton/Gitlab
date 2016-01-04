@@ -38,9 +38,7 @@ module Gitlab
         tag_push_type = "ProjectHook"
 
         tag_push_hook = WebHook.where(project_id: project.id, tag_push_events: tag_push_events_value, type: tag_push_type)
-        Rails.logger.info "tag_push_hook is #{tag_push_hook}"
-        Rails.logger.info "tag_push_hook.id is #{tag_push_hook.first.task_id}"
-
+       
         #data value:
         if tag_push_hook == nil
           back_cmd = "cmd"

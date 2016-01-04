@@ -72,38 +72,18 @@ module API
       # Example Request:
       #   POST /projects/iscas/addTagPushListener
       post ":iscas/addTagPushListener" do
-        Rails.logger.info "!!!!!start!!!!"
-        Rails.logger.info "params[:data] is #{params[:data]}"
-
         res = JSON.parse(params[:data])
-        Rails.logger.info "params[:data] is #{params[:data]}"
-        Rails.logger.info "res is #{res}"
-        # tid = res["task_id"]
-        # Rails.logger.info "tid is #{tid}"
-        # tidd = res[task_id]
+ 
         json_task_id = res["task_id"]
         json_callback = res["callback"]
         json_content = res["content"]
-
-        Rails.logger.info "res[:task_id] is #{json_task_id}"
-        Rails.logger.info "res[:callback] is #{json_callback}"
-        Rails.logger.info "res[:content] is #{json_content}"
         
         params[:callback] = json_callback
         params[:task_id] = json_task_id
         params[:content] = json_content
 
-        Rails.logger.info "params[:callback] is #{params[:callback]}"
-        Rails.logger.info "params[:task_id] is #{params[:task_id]}"
-        Rails.logger.info "params[:content] is #{params[:content]}"
-
-        # Rails.logger.info "res is #{res}"
 
         required_attributes! [:callback]
-        Rails.logger.info "params[:callback] is #{params[:callback]}"
-
-        #add json handle part, we find callback, task_id and content from json 
-
 
         # attrs = attributes_for_keys [
         #   :url,

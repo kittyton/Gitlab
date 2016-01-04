@@ -337,12 +337,6 @@ ActiveRecord::Schema.define(version: 20151229033756) do
   add_index "identities", ["created_at", "id"], name: "index_identities_on_created_at_and_id", using: :btree
   add_index "identities", ["user_id"], name: "index_identities_on_user_id", using: :btree
 
-  create_table "iscas", force: true do |t|
-    t.integer  "member_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "issues", force: true do |t|
     t.string   "title"
     t.integer  "assignee_id"

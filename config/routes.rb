@@ -2,8 +2,6 @@ require 'sidekiq/web'
 require 'api/api'
 
 Gitlab::Application.routes.draw do
-  resources :iscas
-  resources :accessors
 
   namespace :ci do
     # CI API

@@ -70,34 +70,26 @@ module API
     end
 
     def iscas_user_project
-      Rails.logger.info "!!!!111111111"
-      Rails.logger.info "params[:content] is #{params[:content]}"
-      
       split_content = params[:content].split(",")
 
       project_content = split_content[1].split(":")   
       projectName = project_content[1]
-      Rails.logger.info "projectName is #{projectName}"
 
       group_content = split_content[0].split(":")
       groupName = group_content[1]
-      Rails.logger.info "groupName is #{groupName}"
 
       private_token_content = split_content[2].split(":")   
       private_token_value = private_token_content[1]
-      Rails.logger.info "private_token_value is #{private_token_value}"
         
       params[:private_token] = private_token_value
 
       @project ||= iscas_find_project(projectName, groupName)
-      Rails.logger.info "!!!!222222222"
 
       @project || not_found!("Project")
     end
 
     def iscas_find_project(projectName, groupName)
       project = Project.find_by(name: projectName)
-      Rails.logger.info "project is #{project}"
 
       if project && can?(current_user, :read_project, project)
         project

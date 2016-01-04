@@ -36,26 +36,16 @@ class WebHook < ActiveRecord::Base
 
   def execute(data, hook_name)
     parsed_url = URI.parse(url)
-    Rails.logger.info "data is #{data}"
-    Rails.logger.info "hook_name is #{hook_name}"
-    Rails.logger.info "@@@@@@@@@start send@@@@@@@@@@"
-    Rails.logger.info "data is #{data.to_json}"
+
     task_id = data[:data][:task_id]
-    Rails.logger.info "task_id is #{task_id}"
 
     data[:data] = data[:data].to_json
-    Rails.logger.info "data is #{data}"
 
     if task_id != nil
-      Rails.logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-      Rails.logger.info "start WebHook now!!!"
       res = Net::HTTP.post_form(parsed_url, data)
       puts res.body
-      Rails.logger.info "+++++++++++++++++++++++++++++++++++++++++++++++++++"
     else
       if parsed_url.userinfo.blank?
-        Rails.logger.info "start WebHook origin !!!"
-        Rails.logger.info "-------------------------------------------------"
         WebHook.post(url,
                      body: data.to_json,
                      headers: {
@@ -63,11 +53,9 @@ class WebHook < ActiveRecord::Base
                        "X-Gitlab-Event" => hook_name.singularize.titleize
                      },
                      verify: enable_ssl_verification)
-        Rails.logger.info "finish webhook origin!!!!!"
-        Rails.logger.info "-------------------------------------------------"
+        
       else
-        Rails.logger.info "-------------------------------------------------"
-        Rails.logger.info "start else WebHook origin!!!"
+        
         post_url = url.gsub("#{parsed_url.userinfo}@", "")
         auth = {
           username: URI.decode(parsed_url.user),
@@ -81,8 +69,7 @@ class WebHook < ActiveRecord::Base
                      },
                      verify: enable_ssl_verification,
                      basic_auth: auth)
-        Rails.logger.info "finish else webhook!!!!!"
-        Rails.logger.info "**************************************************"
+        
       end
     end
 
@@ -95,7 +82,7 @@ class WebHook < ActiveRecord::Base
   end
 
   def async_execute(data, hook_name)
-    Rails.logger.info "start 1!!!!!!!!!1"
+    
     Sidekiq::Client.enqueue(ProjectWebHookWorker, id, data, hook_name)
   end
 end
