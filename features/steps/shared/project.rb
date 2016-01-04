@@ -10,7 +10,8 @@ module SharedProject
   # Create a specific project called "Shop"
   step 'I own project "Shop"' do
     @project = Project.find_by(name: "Shop")
-    @project ||= create(:project, name: "Shop", namespace: @user.namespace, snippets_enabled: true)
+    # @project ||= create(:project, name: "Shop", namespace: @user.namespace, snippets_enabled: true)
+    @project ||= create(:project, name: "Shop", namespace: @user.namespace)
     @project.team << [@user, :master]
   end
 

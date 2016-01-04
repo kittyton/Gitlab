@@ -9,7 +9,7 @@ describe GitlabMarkdownHelper do
   let(:commit)        { project.commit }
   let(:issue)         { create(:issue, project: project) }
   let(:merge_request) { create(:merge_request, source_project: project, target_project: project) }
-  let(:snippet)       { create(:project_snippet, project: project) }
+  # let(:snippet)       { create(:project_snippet, project: project) }
 
   # Helper expects a current_user method.
   let(:current_user) { user }

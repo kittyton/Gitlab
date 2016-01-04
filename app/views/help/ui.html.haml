@@ -200,17 +200,17 @@
   %h3
     %code .file-holder
 
-  - blob = Snippet.new(content: "Wow\nSuch\nFile")
-  .example
-    .file-holder
-      .file-title
-        Awesome file
-        .file-actions
-          .btn-group
-            %a.btn Edit
-            %a.btn Remove
-      .file-contenta.code
-        = render 'shared/file_highlight', blob: blob
+  -#- blob = Snippet.new(content: "Wow\nSuch\nFile")
+  -#.example
+  -#  .file-holder
+  -#    .file-title
+  -#      Awesome file
+  -#      .file-actions
+  -#        .btn-group
+  -#          %a.btn Edit
+  -#          %a.btn Remove
+  -#    .file-contenta.code
+  -#      = render 'shared/file_highlight', blob: blob
 
 
   %h2#markdown Markdown

@@ -208,7 +208,7 @@ describe 'GitLab Markdown', feature: true do
         expect(doc).to reference_users
         expect(doc).to reference_issues
         expect(doc).to reference_merge_requests
-        expect(doc).to reference_snippets
+        # expect(doc).to reference_snippets
         expect(doc).to reference_commit_ranges
         expect(doc).to reference_commits
         expect(doc).to reference_labels

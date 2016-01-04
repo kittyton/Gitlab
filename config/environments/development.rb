@@ -14,8 +14,8 @@ Gitlab::Application.configure do
   config.action_mailer.raise_delivery_errors = false
 
   # Print deprecation notices to the Rails logger
-  config.active_support.deprecation = :log
-
+  # config.active_support.deprecation = :log
+  Rails.logger = Logger.new(STDOUT)
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
@@ -24,11 +24,6 @@ Gitlab::Application.configure do
 
   # Expands the lines which load the assets
   # config.assets.debug = true
-  
-  # Adds additional error checking when serving assets at runtime.
-  # Checks for improperly declared sprockets dependencies.
-  # Raises helpful error messages.
-  config.assets.raise_runtime_errors = true
 
   # For having correct urls in mails
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }

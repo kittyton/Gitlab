@@ -3,7 +3,8 @@ module API
   class Notes < Grape::API
     before { authenticate! }
 
-    NOTEABLE_TYPES = [Issue, MergeRequest, Snippet]
+    # NOTEABLE_TYPES = [Issue, MergeRequest, Snippet]
+    NOTEABLE_TYPES = [Issue, MergeRequest]
 
     resource :projects do
       NOTEABLE_TYPES.each do |noteable_type|

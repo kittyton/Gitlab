@@ -70,7 +70,7 @@ class User < ActiveRecord::Base
   include Referable
   include Sortable
   include TokenAuthenticatable
-
+  include IscasAuditService
   default_value_for :admin, false
   default_value_for :can_create_group, gitlab_config.default_can_create_group
   default_value_for :can_create_team, false
@@ -122,7 +122,7 @@ class User < ActiveRecord::Base
   has_many :users_star_projects, dependent: :destroy
   has_many :starred_projects, through: :users_star_projects, source: :project
 
-  has_many :snippets,                 dependent: :destroy, foreign_key: :author_id, class_name: "Snippet"
+  # has_many :snippets,                 dependent: :destroy, foreign_key: :author_id, class_name: "Snippet"
   has_many :project_members,          dependent: :destroy, class_name: 'ProjectMember'
   has_many :issues,                   dependent: :destroy, foreign_key: :author_id
   has_many :notes,                    dependent: :destroy, foreign_key: :author_id
@@ -667,75 +667,21 @@ class User < ActiveRecord::Base
   end
 
   def post_create_hook
-    log_info("User \"#{self.name}\" (#{self.email}) was created")
- 
-  #The audit interface url
-  url="http://192.168.4.72:8080/v2/audit/_single"   
-  opType="createUser"
-  #Handle user register
-  opUser="userRegister"
-  #Record the create user operation by the audit interface
-  if(self.created_by!=nil)
-    opUser=self.created_by.username
-  end
-    #data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
-    # opUser,opType,"This is a create user event",Mac.addr,"liuqingqing")
-    # send_http(url,data)       
-
-
+    log_info("User \"#{self.name}\" (#{self.email}) was created")  
     notification_service.new_user(self, @reset_token) if self.created_by_id
     system_hook_service.execute_hooks_for(self, :create)
-
+    #iscas_audit
+    enableAudit=IscasSettings.enableAudit
+    Rails.logger.info "****************************************** enableAudit=#{enableAudit}"
+    if enableAudit==true
+      record_gitlab_related_operation(self,"createUser",self.id,self.username,"this is the path")
+    end
   end
 
-
-#Method Name:construct_http_data
-#Des:Enclose http request params
-#Author Name:liuqingqing
-def construct_http_data(appID,appVersion,fileID,fileName,filePath,opDate,opUser,opType,message,macIP,devInfo)
-   http_data={"appID" =>appID,
-               "appVersion" => appVersion,
-               "fileID"=>fileID,
-               "fileName"=>fileName,
-               "filePath"=>filePath,
-               "opDate"=>opDate,
-               "opUser"=>opUser,
-               "opType"=>opType,
-               "message"=>message,
-               "macIP"=>macIP,
-               "devInfo"=>devInfo}.to_json
-  
-end
-
-#Method name:send_http
-#Des:Enclose Http request
-#Author Name:liuqingqing
-def send_http(url,data)  
-    url = URI.parse(url)  
-    req = Net::HTTP::Put.new(url.path,{'Content-Type' => 'application/json'})  
-    req.body = data  
-    res = Net::HTTP.new(url.host,url.port).start{|http| http.request(req)}  
-    log_info(res.code)
-    log_info(res.body)
-    log_info(data)
-    log_info(Mac.addr)                                                                                                 
-end 
 
   def post_destroy_hook
     log_info("User \"#{self.name}\" (#{self.email})  was removed")
-
-    #Record the create user operation by the audit interface
-    url="http://192.168.4.72:8080/v2/audit/_single"
-    opType="deleteUser"
-    #Handle user register
-    opUser="userRegister"
-    if(self.created_by!=nil)
-    opUser=self.created_by.username
-    end
-    #data=construct_http_data("appID","V2.0",self.id,self.name,"this is the path",Time.now.strftime("%Y-%m-%d %H:%M:%S"),
-    # opUser,opType,"This is a delete user event",Mac.addr,"liuqingqing")
-    # send_http(url,data)
-    #system_hook_service.execute_hooks_for(self, :destroy)
+    system_hook_service.execute_hooks_for(self, :destroy)  
   end
 
   def notification_service
@@ -817,14 +763,5 @@ end
 
   def can_be_removed?
     !solo_owned_groups.present?
-  end
-
-  def ci_authorized_projects
-    @ci_authorized_projects ||= Ci::Project.where(gitlab_id: authorized_projects)
-  end
-
-  def ci_authorized_runners
-    Ci::Runner.specific.includes(:runner_projects).
-      where(ci_runner_projects: { project_id: ci_authorized_projects } )
   end
 end
