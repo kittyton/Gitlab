@@ -19,6 +19,7 @@
 class WebHook < ActiveRecord::Base
   include Sortable
   include HTTParty
+  #include HttpHelper
   require "open-uri" 
 
   default_value_for :push_events, true
@@ -37,52 +38,56 @@ class WebHook < ActiveRecord::Base
   def execute(data, hook_name)
     parsed_url = URI.parse(url)
 
-    task_id = data[:data][:task_id]
-
-    data[:data] = data[:data].to_json
-
-    if task_id != nil
-      res = Net::HTTP.post_form(parsed_url, data)
-      puts res.body
-    else
-      if parsed_url.userinfo.blank?
-        WebHook.post(url,
-                     body: data.to_json,
-                     headers: {
-                       "Content-Type" => "application/json",
-                       "X-Gitlab-Event" => hook_name.singularize.titleize
-                     },
-                     verify: enable_ssl_verification)
-        
-      else
-        
-        post_url = url.gsub("#{parsed_url.userinfo}@", "")
-        auth = {
-          username: URI.decode(parsed_url.user),
-          password: URI.decode(parsed_url.password),
-        }
-        WebHook.post(post_url,
-                     body: data.to_json,
-                     headers: {
-                       "Content-Type" => "application/json",
-                       "X-Gitlab-Event" => hook_name.singularize.titleize
-                     },
-                     verify: enable_ssl_verification,
-                     basic_auth: auth)
-        
-      end
+    if parsed_url.userinfo.blank?
+      WebHook.post(url,
+                   body: data.to_json,
+                   headers: {
+                     "Content-Type" => "application/json",
+                     "X-Gitlab-Event" => hook_name.singularize.titleize
+                   },
+                   verify: enable_ssl_verification)
+    else        
+      post_url = url.gsub("#{parsed_url.userinfo}@", "")
+      auth = {
+        username: URI.decode(parsed_url.user),
+        password: URI.decode(parsed_url.password),
+      }
+      WebHook.post(post_url,
+                   body: data.to_json,
+                   headers: {
+                     "Content-Type" => "application/json",
+                     "X-Gitlab-Event" => hook_name.singularize.titleize
+                   },
+                   verify: enable_ssl_verification,
+                   basic_auth: auth)
     end
 
-    
-
-    
   rescue SocketError, Errno::ECONNRESET, Errno::ECONNREFUSED, Net::OpenTimeout => e
     logger.error("WebHook Error => #{e}")
     false
   end
 
+
+  def iscas_execute(data, hook_name)
+    data[:data] = data[:data].to_json
+    # data[]
+    parsed_url = URI.parse(url)
+    #res = send_http(url, data)
+    #res =  Net::HTTP.post_form(parsed_url, data)
+    res = iscas_post_handler(parsed_url, data)
+    #puts res.body
+
+  rescue SocketError, Errno::ECONNRESET, Errno::ECONNREFUSED, Net::OpenTimeout => e
+    logger.error("WebHook Error => #{e}")
+    false
+  end
+
+  def iscas_post_handler(url, data)
+    res =  Net::HTTP.post_form(url, data)
+    puts res.body
+  end
+
   def async_execute(data, hook_name)
-    
     Sidekiq::Client.enqueue(ProjectWebHookWorker, id, data, hook_name)
   end
 end

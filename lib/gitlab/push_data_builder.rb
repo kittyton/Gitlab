@@ -47,14 +47,15 @@ module Gitlab
           back_task_id = tag_push_hook.first.task_id
           back_content = "content"
           back_callback = nil
+        else
+          back_cmd = "cmd"
+          back_account = "account"
+          back_password = "password"
+          back_task_id = nil
+          back_content = "content"
+          back_callback = nil
         end
 
-        back_cmd = "cmd"
-        back_account = "account"
-        back_password = "password"
-        back_task_id = tag_push_hook.first.task_id
-        back_content = "content"
-        back_callback = nil
         
         # Hash to be passed as post_receive_data
         data = {
