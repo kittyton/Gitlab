@@ -36,7 +36,6 @@ class WebHook < ActiveRecord::Base
 
   def execute(data, hook_name)
     parsed_url = URI.parse(url)
-    Rails.logger.info "!!!!!!!!!!!!!!!!!start execute before task_id data is #{data}"
 
     if hook_name == 'push_hooks'
       task_id = data[:data][:task_id]
@@ -45,12 +44,10 @@ class WebHook < ActiveRecord::Base
       task_id = nil
     end
     
-    Rails.logger.info "!!!!!!!!!!!!!!!!!start execute"
-    Rails.logger.info "!!!!!!!!!!!!!!!!!data is #{data} in execute"
     if task_id != nil
       res = Net::HTTP.post_form(parsed_url, data)
       puts res.body
-      Rails.logger.info "1111111111111111111@@@@@@@@@@@@@@@@@@@@@@@@@@@@11111111111111111111finished"
+      
     else
       if parsed_url.userinfo.blank?
         WebHook.post(url,
@@ -60,7 +57,6 @@ class WebHook < ActiveRecord::Base
                        "X-Gitlab-Event" => hook_name.singularize.titleize
                      },
                      verify: enable_ssl_verification)
-        Rails.logger.info "1111111111111111111@@@@@@@@@@@@@@@@@@@@@@@@@@@@11111111111111111111finished in  else if"
       else
         
         post_url = url.gsub("#{parsed_url.userinfo}@", "")
@@ -76,7 +72,6 @@ class WebHook < ActiveRecord::Base
                      },
                      verify: enable_ssl_verification,
                      basic_auth: auth)
-        Rails.logger.info "1111111111111111111@@@@@@@@@@@@@@@@@@@@@@@@@@@@11111111111111111111finished in  else else "
         
       end
     end

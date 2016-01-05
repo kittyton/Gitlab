@@ -57,7 +57,6 @@ module Gitlab
         end
 
         
-        Rails.logger.info "!!!!!!!!!!!!!!!!!start push data in a package"
         # Hash to be passed as post_receive_data
         data = {
           #change task_id to data and add task_id in String data 
@@ -91,8 +90,6 @@ module Gitlab
           commits: commit_attrs,
           total_commits_count: commits_count
         }
-        Rails.logger.info "!!!!!!!!!!!!!!!!!finish push data in a package"
-        Rails.logger.info "!!!!!!!!!!!!!!!!!data is #{data}"
 
         data
       end
