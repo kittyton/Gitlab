@@ -69,6 +69,8 @@ class WebHook < ActiveRecord::Base
 
 
   def iscas_execute(data, hook_name)
+    data[:data] = data[:data].to_json
+    # data[]
     parsed_url = URI.parse(url)
     #res = send_http(url, data)
     #res =  Net::HTTP.post_form(parsed_url, data)
