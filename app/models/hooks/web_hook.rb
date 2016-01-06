@@ -67,15 +67,56 @@ class WebHook < ActiveRecord::Base
     false
   end
 
+  #Execute Web hooks. Like tag push event
+  #   It is now mainly invoked to deal with tag push events.
+  #   This method is just like method execute above.
+  #   When the system find a listened event, this mehtod will be invoked.
+  #   Besides the data deliever through parameter, we will add "data" field in data.
+  #   The content of "data" is data_value mainly used for work flow.
+  #
+  # Parameters:
+  #   data (required) - requied data content pushed in PushDataBuilder
+  #   hook_name (required) - the category of hook to be dealed with
+  #   webhook_instance (required) - mainly used to get certain field in webhook
+  #
+  #Invoked Example:
+  # => invoked by proform in class ProjectWebHookWorker in path "app/works/project_web_hook_worker.rb".
 
-  def iscas_execute(data, hook_name)
-    data[:data] = data[:data].to_json
-    # data[]
+  def iscas_execute(data, hook_name, webhook_instance)
+    Rails.logger.info "!!!!!!!!!!!!data in iscas_execute is #{data}"
+    Rails.logger.info "!!!!!!!!!!!!hook_name in iscas_execute is #{hook_name}"
+    Rails.logger.info "!!!!!!!!!!!!webhook_instance in iscas_execute is #{webhook_instance}"
+    Rails.logger.info "@@@@@@@start in iscas_execute$$$$$$$$$$$$$$$$$$$$$!~~~~"
+
+    task_id = webhook_instance.task_id
+    Rails.logger.info "!!!!!!!!!!!!task_id in iscas_execute is #{task_id}"
+
+    back_cmd = "cmd"
+    back_account = "account"
+    back_password = "password"
+    back_task_id = task_id
+    back_content = "content"
+    back_callback = nil
+
+    data_value = {
+          cmd: back_cmd,
+          account: back_account,
+          password: back_password,
+          task_id: back_task_id,
+          content: back_content,
+          callback: back_callback
+        }
+    Rails.logger.info "data_value is #{data_value} ~~~~~~~~~~~in iscas_execute"
+    data_value = data_value.to_json
+    Rails.logger.info "data_value to_json is #{data_value}~~~~~~~~~~~~~in iscas_execute"
+    data["data"] = data_value
+    
+    Rails.logger.info "data[:data] to json is #{data[:data]}~~~~~~~~~~~~~~~~~~~~~in iscas_execute"
+    Rails.logger.info "data is #{data} ~~~~~~~~~~~~~~~~after to json in iscas_execute"
+    
     parsed_url = URI.parse(url)
-    #res = send_http(url, data)
-    #res =  Net::HTTP.post_form(parsed_url, data)
+    
     res = iscas_post_handler(parsed_url, data)
-    #puts res.body
 
   rescue SocketError, Errno::ECONNRESET, Errno::ECONNREFUSED, Net::OpenTimeout => e
     logger.error("WebHook Error => #{e}")
