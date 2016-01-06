@@ -83,13 +83,7 @@ class WebHook < ActiveRecord::Base
   # => invoked by proform in class ProjectWebHookWorker in path "app/works/project_web_hook_worker.rb".
 
   def iscas_execute(data, hook_name, webhook_instance)
-    Rails.logger.info "!!!!!!!!!!!!data in iscas_execute is #{data}"
-    Rails.logger.info "!!!!!!!!!!!!hook_name in iscas_execute is #{hook_name}"
-    Rails.logger.info "!!!!!!!!!!!!webhook_instance in iscas_execute is #{webhook_instance}"
-    Rails.logger.info "@@@@@@@start in iscas_execute$$$$$$$$$$$$$$$$$$$$$!~~~~"
-
     task_id = webhook_instance.task_id
-    Rails.logger.info "!!!!!!!!!!!!task_id in iscas_execute is #{task_id}"
 
     back_cmd = "cmd"
     back_account = "account"
@@ -106,14 +100,10 @@ class WebHook < ActiveRecord::Base
           content: back_content,
           callback: back_callback
         }
-    Rails.logger.info "data_value is #{data_value} ~~~~~~~~~~~in iscas_execute"
     data_value = data_value.to_json
-    Rails.logger.info "data_value to_json is #{data_value}~~~~~~~~~~~~~in iscas_execute"
     data["data"] = data_value
     
-    Rails.logger.info "data[:data] to json is #{data[:data]}~~~~~~~~~~~~~~~~~~~~~in iscas_execute"
-    Rails.logger.info "data is #{data} ~~~~~~~~~~~~~~~~after to json in iscas_execute"
-    
+  
     parsed_url = URI.parse(url)
     
     res = iscas_post_handler(parsed_url, data)
