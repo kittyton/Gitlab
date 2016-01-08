@@ -70,28 +70,15 @@ module API
     end
 
     def iscas_user_project
-      # split_content = params[:content].split(",")
-
-      # project_content = split_content[1].split(":")   
-      # projectName = project_content[1]
-
-      # group_content = split_content[0].split(":")
-      # groupName = group_content[1]
-      Rails.logger.info "content is #{params[:content]}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`"
-      # res_temp = JSON.parse(params[:content])
-      # Rails.logger.info "res_temp is #{res_temp}"
       content = params[:content]
       
 
       projectName = content["project"]
-      Rails.logger.info "projectName is #{projectName}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       groupName = content["group"]
-      Rails.logger.info "groupName is #{groupName}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
       #private_token_content = split_content[2].split(":")   
       #private_token_value = private_token_content[1]
       private_token_value = params[:account]
-      Rails.logger.info "private_token_value is #{private_token_value}"
 
       params[:private_token] = private_token_value
 
