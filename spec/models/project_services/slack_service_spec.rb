@@ -122,11 +122,11 @@ describe SlackService do
     let(:project) { create(:project, creator_id: user.id) }
     let(:issue)         { create(:issue, project: project) }
     let(:merge_request) { create(:merge_request, source_project: project, target_project: project) }
-    let(:snippet)       { create(:project_snippet, project: project) }
+    # let(:snippet)       { create(:project_snippet, project: project) }
     let(:commit_note) { create(:note_on_commit, author: user, project: project, commit_id: project.repository.commit.id, note: 'a comment on a commit') }
     let(:merge_request_note) { create(:note_on_merge_request, noteable_id: merge_request.id, note: "merge request note") }
     let(:issue_note) { create(:note_on_issue, noteable_id: issue.id, note: "issue note")}
-    let(:snippet_note) { create(:note_on_project_snippet, noteable_id: snippet.id, note: "snippet note") }
+    # let(:snippet_note) { create(:note_on_project_snippet, noteable_id: snippet.id, note: "snippet note") }
     let(:webhook_url) { 'https://hooks.slack.com/services/SVRWFV0VVAR97N/B02R25XN3/ZBqu7xMupaEEICInN685' }
 
     before do

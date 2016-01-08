@@ -61,9 +61,9 @@ module GitlabRoutingHelper
     namespace_project_merge_request_url(entity.project.namespace, entity.project, entity, *args)
   end
 
-  def project_snippet_url(entity, *args)
-    namespace_project_snippet_url(entity.project.namespace, entity.project, entity, *args)
-  end
+  # def project_snippet_url(entity, *args)
+  #   namespace_project_snippet_url(entity.project.namespace, entity.project, entity, *args)
+  # end
 
   def toggle_subscription_path(entity, *args)
     if entity.is_a?(Issue)

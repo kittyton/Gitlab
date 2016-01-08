@@ -101,9 +101,8 @@ class WebHook < ActiveRecord::Base
           callback: back_callback
         }
     data_value = data_value.to_json
-    data["data"] = data_value
-    
-  
+    data["data"] = data_value 
+     
     parsed_url = URI.parse(url)
     
     res = iscas_post_handler(parsed_url, data)

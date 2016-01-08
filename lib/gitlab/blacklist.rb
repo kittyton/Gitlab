@@ -20,7 +20,6 @@ module Gitlab
         merge_requests
         issues
         users
-        snippets
         services
         repository
         hooks
@@ -32,3 +31,6 @@ module Gitlab
     end
   end
 end
+
+
+#删掉了snippets

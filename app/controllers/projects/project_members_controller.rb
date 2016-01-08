@@ -1,6 +1,7 @@
 class Projects::ProjectMembersController < Projects::ApplicationController
   # Authorize
   before_action :authorize_admin_project!, except: :leave
+  include IscasSearchService
 
   def index
     @project_members = @project.project_members
@@ -35,7 +36,19 @@ class Projects::ProjectMembersController < Projects::ApplicationController
 
   def create
     @project.team.add_users(params[:user_ids].split(','), params[:access_level], current_user)
-
+     
+     #iscas_search
+     enableSearch=IscasSettings.enableSearch
+     if enableSearch==true
+      userIds=Array.new
+      emails=Array.new
+      userIds=params[:user_ids].split(",")
+      userIds.each{
+       |id| email= User.find_by(id:id).email
+       emails.push(email)
+     }
+      updateProject(@project.id,emails,Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
+     end
     redirect_to namespace_project_project_members_path(@project.namespace, @project)
   end
 

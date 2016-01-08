@@ -2,7 +2,7 @@
 class Projects::BlobController < Projects::ApplicationController
   include ExtractsPath
   include ActionView::Helpers::SanitizeHelper
-
+  include IscasSearchService
   # Raised when given an invalid file path
   class InvalidPathError < StandardError; end
 
@@ -16,19 +16,27 @@ class Projects::BlobController < Projects::ApplicationController
   before_action :require_branch_head, only: [:edit, :update]
   before_action :editor_variables, except: [:show, :preview, :diff]
   before_action :after_edit_path, only: [:edit, :update]
-
   def new
     commit unless @repository.empty?
   end
 
   def create
     result = Files::CreateService.new(@project, current_user, @commit_params).execute
-
+    #iscas_search
+     enableSearch=IscasSettings.enableSearch
+     if enableSearch==true
+      message=@commit_params[:commit_message]
+      projectId=@project.id
+      date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
+      commit
+      id=@commit.id
+      addCommit(id,message,projectId,date)
+     end
     if result[:status] == :success
       flash[:notice] = "Your changes have been successfully committed"
       respond_to do |format|
-        format.html { redirect_to namespace_project_blob_path(@project.namespace, @project, File.join(@target_branch, @file_path)) }
-        format.json { render json: { message: "success", filePath: namespace_project_blob_path(@project.namespace, @project, File.join(@target_branch, @file_path)) } }
+        format.html { redirect_to namespace_project_blob_path(@project.namespace, @project,File.join(@target_branch, @file_path)) }
+        format.json { render json: { message: "success", filePath: namespace_project_blob_path(@project.namespace, @project,File.join(@target_branch, @file_path)) } }
       end
     else
       flash[:alert] = result[:message]
@@ -38,6 +46,7 @@ class Projects::BlobController < Projects::ApplicationController
       end
     end
   end
+ 
 
   def show
   end
@@ -73,11 +82,18 @@ class Projects::BlobController < Projects::ApplicationController
   end
 
   def destroy
+    commit
+    id=@commit.id
     result = Files::DeleteService.new(@project, current_user, @commit_params).execute
 
     if result[:status] == :success
       flash[:notice] = "Your changes have been successfully committed"
-      redirect_to namespace_project_tree_path(@project.namespace, @project, @target_branch)
+      #iscas_search
+       enableSearch=IscasSettings.enableSearch
+       if enableSearch==true
+        deleteCommit(id,@project.id)
+       end
+       redirect_to namespace_project_tree_path(@project.namespace, @project, @target_branch)
     else
       flash[:alert] = result[:message]
       render :show
@@ -119,7 +135,6 @@ class Projects::BlobController < Projects::ApplicationController
 
   def commit
     @commit = @repository.commit(@ref)
-
     return not_found! unless @commit
   end
 

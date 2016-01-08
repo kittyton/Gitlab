@@ -44,7 +44,7 @@ module Gitlab
 
 
     def file_name_regex
-      @file_name_regex ||= /\A[a-zA-Z0-9_\-\.]*\z/.freeze
+      @file_name_regex ||= /\A[a-zA-Z0-9\u4e00-\u9fa5_\-\.]*\z/.freeze
     end
 
     def file_name_regex_message

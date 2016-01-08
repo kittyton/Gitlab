@@ -1,4 +1,5 @@
 class Admin::GroupsController < Admin::ApplicationController
+  include IscasAuditService
   before_action :group, only: [:edit, :show, :update, :destroy, :project_update, :members_update]
 
   def index
@@ -26,6 +27,11 @@ class Admin::GroupsController < Admin::ApplicationController
 
     if @group.save
       @group.add_owner(current_user)
+      #iscas_audit
+      enableAudit=IscasSettings.enableAudit
+      if enableAudit==true
+        record_gitlab_related_operation(current_user,"createGroup",@group.id,@group.name,@group.path)
+      end
       redirect_to [:admin, @group], notice: 'Group was successfully created.'
     else
       render "new"
@@ -48,7 +54,11 @@ class Admin::GroupsController < Admin::ApplicationController
 
   def destroy
     DestroyGroupService.new(@group, current_user).execute
-
+    #iscas_audit
+    enableAudit=IscasSettings.enableAudit
+    if enableAudit==true
+      record_gitlab_related_operation(current_user,"deleteGroup",@group.id,@group.name,@group.path)
+    end
     redirect_to admin_groups_path, notice: 'Group was successfully deleted.'
   end
 

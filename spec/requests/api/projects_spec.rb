@@ -11,7 +11,7 @@ describe API::API, api: true  do
   let(:project) { create(:project, creator_id: user.id, namespace: user.namespace) }
   let(:project2) { create(:project, path: 'project2', creator_id: user.id, namespace: user.namespace) }
   let(:project3) { create(:project, path: 'project3', creator_id: user.id, namespace: user.namespace) }
-  let(:snippet) { create(:project_snippet, author: user, project: project, title: 'example') }
+  # let(:snippet) { create(:project_snippet, author: user, project: project, title: 'example') }
   let(:project_member) { create(:project_member, user: user, project: project, access_level: ProjectMember::MASTER) }
   let(:project_member2) { create(:project_member, user: user3, project: project, access_level: ProjectMember::DEVELOPER) }
   let(:user4) { create(:user) }
@@ -23,7 +23,8 @@ describe API::API, api: true  do
     namespace: user.namespace,
     merge_requests_enabled: false,
     issues_enabled: false, wiki_enabled: false,
-    snippets_enabled: false, visibility_level: 0)
+    # snippets_enabled: false, visibility_level: 0
+    )
   end
   let(:project_member3) do
     create(:project_member,
@@ -409,89 +410,89 @@ describe API::API, api: true  do
     end
   end
 
-  describe 'GET /projects/:id/snippets' do
-    before { snippet }
+  # describe 'GET /projects/:id/snippets' do
+  #   before { snippet }
+  #
+  #   it 'should return an array of project snippets' do
+  #     get api("/projects/#{project.id}/snippets", user)
+  #     expect(response.status).to eq(200)
+  #     expect(json_response).to be_an Array
+  #     expect(json_response.first['title']).to eq(snippet.title)
+  #   end
+  # end
 
-    it 'should return an array of project snippets' do
-      get api("/projects/#{project.id}/snippets", user)
-      expect(response.status).to eq(200)
-      expect(json_response).to be_an Array
-      expect(json_response.first['title']).to eq(snippet.title)
-    end
-  end
+  # describe 'GET /projects/:id/snippets/:snippet_id' do
+  #   it 'should return a project snippet' do
+  #     get api("/projects/#{project.id}/snippets/#{snippet.id}", user)
+  #     expect(response.status).to eq(200)
+  #     expect(json_response['title']).to eq(snippet.title)
+  #   end
+  #
+  #   it 'should return a 404 error if snippet id not found' do
+  #     get api("/projects/#{project.id}/snippets/1234", user)
+  #     expect(response.status).to eq(404)
+  #   end
+  # end
 
-  describe 'GET /projects/:id/snippets/:snippet_id' do
-    it 'should return a project snippet' do
-      get api("/projects/#{project.id}/snippets/#{snippet.id}", user)
-      expect(response.status).to eq(200)
-      expect(json_response['title']).to eq(snippet.title)
-    end
+  # describe 'POST /projects/:id/snippets' do
+  #   it 'should create a new project snippet' do
+  #     post api("/projects/#{project.id}/snippets", user),
+  #       title: 'api test', file_name: 'sample.rb', code: 'test',
+  #       visibility_level: '0'
+  #     expect(response.status).to eq(201)
+  #     expect(json_response['title']).to eq('api test')
+  #   end
+  #
+  #   it 'should return a 400 error if invalid snippet is given' do
+  #     post api("/projects/#{project.id}/snippets", user)
+  #     expect(status).to eq(400)
+  #   end
+  # end
 
-    it 'should return a 404 error if snippet id not found' do
-      get api("/projects/#{project.id}/snippets/1234", user)
-      expect(response.status).to eq(404)
-    end
-  end
+  # describe 'PUT /projects/:id/snippets/:shippet_id' do
+  #   it 'should update an existing project snippet' do
+  #     put api("/projects/#{project.id}/snippets/#{snippet.id}", user),
+  #       code: 'updated code'
+  #     expect(response.status).to eq(200)
+  #     expect(json_response['title']).to eq('example')
+  #     expect(snippet.reload.content).to eq('updated code')
+  #   end
 
-  describe 'POST /projects/:id/snippets' do
-    it 'should create a new project snippet' do
-      post api("/projects/#{project.id}/snippets", user),
-        title: 'api test', file_name: 'sample.rb', code: 'test',
-        visibility_level: '0'
-      expect(response.status).to eq(201)
-      expect(json_response['title']).to eq('api test')
-    end
+  #   it 'should update an existing project snippet with new title' do
+  #     put api("/projects/#{project.id}/snippets/#{snippet.id}", user),
+  #       title: 'other api test'
+  #     expect(response.status).to eq(200)
+  #     expect(json_response['title']).to eq('other api test')
+  #   end
+  # end
 
-    it 'should return a 400 error if invalid snippet is given' do
-      post api("/projects/#{project.id}/snippets", user)
-      expect(status).to eq(400)
-    end
-  end
+  # describe 'DELETE /projects/:id/snippets/:snippet_id' do
+  #   before { snippet }
+  #
+  #   it 'should delete existing project snippet' do
+  #     expect do
+  #       delete api("/projects/#{project.id}/snippets/#{snippet.id}", user)
+  #     end.to change { Snippet.count }.by(-1)
+  #     expect(response.status).to eq(200)
+  #   end
 
-  describe 'PUT /projects/:id/snippets/:shippet_id' do
-    it 'should update an existing project snippet' do
-      put api("/projects/#{project.id}/snippets/#{snippet.id}", user),
-        code: 'updated code'
-      expect(response.status).to eq(200)
-      expect(json_response['title']).to eq('example')
-      expect(snippet.reload.content).to eq('updated code')
-    end
+  #   it 'should return 404 when deleting unknown snippet id' do
+  #     delete api("/projects/#{project.id}/snippets/1234", user)
+  #     expect(response.status).to eq(404)
+  #   end
+  # end
 
-    it 'should update an existing project snippet with new title' do
-      put api("/projects/#{project.id}/snippets/#{snippet.id}", user),
-        title: 'other api test'
-      expect(response.status).to eq(200)
-      expect(json_response['title']).to eq('other api test')
-    end
-  end
-
-  describe 'DELETE /projects/:id/snippets/:snippet_id' do
-    before { snippet }
-
-    it 'should delete existing project snippet' do
-      expect do
-        delete api("/projects/#{project.id}/snippets/#{snippet.id}", user)
-      end.to change { Snippet.count }.by(-1)
-      expect(response.status).to eq(200)
-    end
-
-    it 'should return 404 when deleting unknown snippet id' do
-      delete api("/projects/#{project.id}/snippets/1234", user)
-      expect(response.status).to eq(404)
-    end
-  end
-
-  describe 'GET /projects/:id/snippets/:snippet_id/raw' do
-    it 'should get a raw project snippet' do
-      get api("/projects/#{project.id}/snippets/#{snippet.id}/raw", user)
-      expect(response.status).to eq(200)
-    end
-
-    it 'should return a 404 error if raw project snippet not found' do
-      get api("/projects/#{project.id}/snippets/5555/raw", user)
-      expect(response.status).to eq(404)
-    end
-  end
+  # describe 'GET /projects/:id/snippets/:snippet_id/raw' do
+  #   it 'should get a raw project snippet' do
+  #     get api("/projects/#{project.id}/snippets/#{snippet.id}/raw", user)
+  #     expect(response.status).to eq(200)
+  #   end
+  #
+  #   it 'should return a 404 error if raw project snippet not found' do
+  #     get api("/projects/#{project.id}/snippets/5555/raw", user)
+  #     expect(response.status).to eq(404)
+  #   end
+  # end
 
   describe :deploy_keys do
     let(:deploy_keys_project) { create(:deploy_keys_project, project: project) }
@@ -739,7 +740,7 @@ describe API::API, api: true  do
       it 'should update other attributes' do
         project_param = { issues_enabled: true,
                           wiki_enabled: true,
-                          snippets_enabled: true,
+                          # snippets_enabled: true,
                           merge_requests_enabled: true,
                           description: 'new description' }
 
@@ -775,7 +776,7 @@ describe API::API, api: true  do
         project_param = { path: 'bar',
                           issues_enabled: true,
                           wiki_enabled: true,
-                          snippets_enabled: true,
+                          # snippets_enabled: true,
                           merge_requests_enabled: true,
                           description: 'new description' }
         put api("/projects/#{project.id}", user3), project_param

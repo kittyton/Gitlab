@@ -40,7 +40,7 @@ FactoryGirl.define do
     path { name.downcase.gsub(/\s/, '_') }
     namespace
     creator
-    snippets_enabled true
+    # snippets_enabled true
 
     trait :public do
       visibility_level Gitlab::VisibilityLevel::PUBLIC

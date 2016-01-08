@@ -5,7 +5,7 @@ class AddMoreDbIndex < ActiveRecord::Migration
     add_index :protected_branches, :project_id
 
     add_index :users_groups, :user_id
-    add_index :snippets, :author_id
+    # add_index :snippets, :author_id
     add_index :notes, :author_id
     add_index :notes, [:noteable_id, :noteable_type]
   end

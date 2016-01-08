@@ -18,7 +18,7 @@ module SharedSnippet
            visibility_level: Snippet::PRIVATE,
            author: current_user)
   end
-  
+
   step 'I have internal "Personal snippet internal" snippet' do
     create(:personal_snippet,
            title: "Personal snippet internal",
@@ -27,7 +27,7 @@ module SharedSnippet
            visibility_level: Snippet::INTERNAL,
            author: current_user)
   end
-  
+
   step 'I have a public many lined snippet' do
     create(:personal_snippet,
            title: 'Many lined snippet',
