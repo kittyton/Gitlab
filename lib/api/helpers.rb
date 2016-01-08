@@ -71,10 +71,11 @@ module API
 
     def iscas_user_project
       content = params[:content]
-      
 
-      projectName = content["project"]
-      groupName = content["group"]
+      content_temp = JSON.parse(content)
+
+      projectName = content_temp["project"]
+      groupName = content_temp["group"]
 
       private_token_value = params[:account]
 
