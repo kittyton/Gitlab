@@ -76,8 +76,6 @@ module API
       projectName = content["project"]
       groupName = content["group"]
 
-      #private_token_content = split_content[2].split(":")   
-      #private_token_value = private_token_content[1]
       private_token_value = params[:account]
 
       params[:private_token] = private_token_value
