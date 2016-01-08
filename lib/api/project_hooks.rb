@@ -73,15 +73,18 @@ module API
       #   POST /projects/iscas/addTagPushListener
       post ":iscas/addTagPushListener" do
         res = JSON.parse(params[:data])
- 
+
         json_task_id = res["task_id"]
         json_callback = res["callback"]
         json_content = res["content"]
+        json_account = res["account"]
         
         params[:callback] = json_callback
         params[:task_id] = json_task_id
         params[:content] = json_content
+        params[:account] = json_account
 
+        
 
         required_attributes! [:callback]
 
