@@ -70,17 +70,14 @@ module API
     end
 
     def iscas_user_project
-      split_content = params[:content].split(",")
+      content = params[:content]
+      
 
-      project_content = split_content[1].split(":")   
-      projectName = project_content[1]
+      projectName = content["project"]
+      groupName = content["group"]
 
-      group_content = split_content[0].split(":")
-      groupName = group_content[1]
+      private_token_value = params[:account]
 
-      private_token_content = split_content[2].split(":")   
-      private_token_value = private_token_content[1]
-        
       params[:private_token] = private_token_value
 
       @project ||= iscas_find_project(projectName, groupName)
