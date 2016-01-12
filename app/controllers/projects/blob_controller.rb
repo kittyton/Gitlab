@@ -2,6 +2,7 @@
 class Projects::BlobController < Projects::ApplicationController
   include ExtractsPath
   include ActionView::Helpers::SanitizeHelper
+  include PreviewService
 
   # Raised when given an invalid file path
   class InvalidPathError < StandardError; end
@@ -16,6 +17,7 @@ class Projects::BlobController < Projects::ApplicationController
   before_action :require_branch_head, only: [:edit, :update]
   before_action :editor_variables, except: [:show, :preview, :diff]
   before_action :after_edit_path, only: [:edit, :update]
+
 
   def new
     commit unless @repository.empty?
@@ -39,8 +41,92 @@ class Projects::BlobController < Projects::ApplicationController
     end
   end
 
+
+
   def show
+    file_name=params[:id]
+    index=file_name.rindex('.')
+    #get the file type
+    file_type=file_name[index..file_name.length-1] 
+    if file_type==".doc"||file_type==".docx"||file_type==".odt"||file_type==".ppt"||file_type==".pptx"||file_type==".odp"||file_type==".xls"||file_type==".xlsx"||file_type==".ods"
+       @blob = @repository.blob_at(@commit.id, @path)
+    if @blob
+      dir=path_to_tempDir
+      new_file_path=path_to_tempDoc
+      constructTmpDir(dir)
+      if File.exist?(new_file_path)
+      else
+        threshold=IscasSettings.tmp_office_threshold
+        empty_tempDir(dir,threshold)
+        writeFile(@blob.data,new_file_path)
+      end
+
+      #Convert the office file to pdf
+      public_path=path_to_public
+      pdf_file_name=pdfFileName
+      tempPdf_path=construct_tempPdf_path(public_path)
+      @pdf_file_path="/pdfjs/tempPdf"+"/"+pdf_file_name  #used for pass to view
+      tmp_pdf_file_path=public_path+@pdf_file_path
+   
+      constructTmpDir(tempPdf_path)
+
+      if File.exist?(tmp_pdf_file_path)
+      else
+        if `pgrep soffice`.size == 0
+          spawn('soffice "-accept=socket,port=2002;urp;"')
+        else
+        # has lanched, convert directly
+        threshold=IscasSettings.tmp_pdf_threshold
+        empty_tempDir(tempPdf_path,threshold)
+        convertToPdf(new_file_path,tmp_pdf_file_path)
+        end  
+      end
+    else
+      not_found!
+    end
+    elsif file_type==".pdf"
+      #write to tempPdf directly
+       @blob = @repository.blob_at(@commit.id, @path)
+       if @blob
+        public_path=path_to_public
+        pdf_file_name=pdfFileName
+        tempPdf_path=construct_tempPdf_path(public_path)
+        @pdf_file_path="/pdfjs/tempPdf"+"/"+pdf_file_name  #used for pass to view
+        tmp_pdf_file_path=public_path+@pdf_file_path
+        constructTmpDir(tempPdf_path)
+        if File.exist?(tmp_pdf_file_path)
+        else
+          threshold=IscasSettings.tmp_pdf_threshold
+          empty_tempDir(tempPdf_path,threshold)
+          writeFile(@blob.data,tmp_pdf_file_path)
+        end
+      else
+        not_found
+      end
+
+
+    else
+      # non-office or pdf file
+    end
+            
+   
+
+
+
+
+
   end
+
+
+
+
+
+
+
+
+
+
+
 
   def edit
     @last_commit = Gitlab::Git::Commit.last_for_path(@repository, @ref, @path).sha
