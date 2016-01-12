@@ -44,7 +44,7 @@ describe Project do
     it { is_expected.to have_many(:milestones).dependent(:destroy) }
     it { is_expected.to have_many(:project_members).dependent(:destroy) }
     it { is_expected.to have_many(:notes).dependent(:destroy) }
-    it { is_expected.to have_many(:snippets).class_name('ProjectSnippet').dependent(:destroy) }
+    # it { is_expected.to have_many(:snippets).class_name('ProjectSnippet').dependent(:destroy) }
     it { is_expected.to have_many(:deploy_keys_projects).dependent(:destroy) }
     it { is_expected.to have_many(:deploy_keys) }
     it { is_expected.to have_many(:hooks).dependent(:destroy) }

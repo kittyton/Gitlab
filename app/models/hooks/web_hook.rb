@@ -19,6 +19,8 @@
 class WebHook < ActiveRecord::Base
   include Sortable
   include HTTParty
+  #include HttpHelper
+  require "open-uri" 
 
   default_value_for :push_events, true
   default_value_for :issues_events, false
@@ -35,6 +37,7 @@ class WebHook < ActiveRecord::Base
 
   def execute(data, hook_name)
     parsed_url = URI.parse(url)
+
     if parsed_url.userinfo.blank?
       WebHook.post(url,
                    body: data.to_json,
@@ -43,7 +46,7 @@ class WebHook < ActiveRecord::Base
                      "X-Gitlab-Event" => hook_name.singularize.titleize
                    },
                    verify: enable_ssl_verification)
-    else
+    else        
       post_url = url.gsub("#{parsed_url.userinfo}@", "")
       auth = {
         username: URI.decode(parsed_url.user),
@@ -58,9 +61,60 @@ class WebHook < ActiveRecord::Base
                    verify: enable_ssl_verification,
                    basic_auth: auth)
     end
+
   rescue SocketError, Errno::ECONNRESET, Errno::ECONNREFUSED, Net::OpenTimeout => e
     logger.error("WebHook Error => #{e}")
     false
+  end
+
+  #Execute Web hooks. Like tag push event
+  #   It is now mainly invoked to deal with tag push events.
+  #   This method is just like method execute above.
+  #   When the system find a listened event, this mehtod will be invoked.
+  #   Besides the data deliever through parameter, we will add "data" field in data.
+  #   The content of "data" is data_value mainly used for work flow.
+  #
+  # Parameters:
+  #   data (required) - requied data content pushed in PushDataBuilder
+  #   hook_name (required) - the category of hook to be dealed with
+  #   webhook_instance (required) - mainly used to get certain field in webhook
+  #
+  #Invoked Example:
+  # => invoked by proform in class ProjectWebHookWorker in path "app/works/project_web_hook_worker.rb".
+
+  def iscas_execute(data, hook_name, webhook_instance)
+    task_id = webhook_instance.task_id
+
+    back_cmd = "cmd"
+    back_account = "account"
+    back_password = "password"
+    back_task_id = task_id
+    back_content = "content"
+    back_callback = nil
+
+    data_value = {
+          cmd: back_cmd,
+          account: back_account,
+          password: back_password,
+          task_id: back_task_id,
+          content: back_content,
+          callback: back_callback
+        }
+    data_value = data_value.to_json
+    data["data"] = data_value 
+     
+    parsed_url = URI.parse(url)
+    
+    res = iscas_post_handler(parsed_url, data)
+
+  rescue SocketError, Errno::ECONNRESET, Errno::ECONNREFUSED, Net::OpenTimeout => e
+    logger.error("WebHook Error => #{e}")
+    false
+  end
+
+  def iscas_post_handler(url, data)
+    res =  Net::HTTP.post_form(url, data)
+    puts res.body
   end
 
   def async_execute(data, hook_name)

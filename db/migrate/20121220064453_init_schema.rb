@@ -168,20 +168,20 @@ class InitSchema < ActiveRecord::Migration
     
     add_index "services", ["project_id"], name: "index_services_on_project_id", using: :btree
     
-    create_table "snippets", force: true do |t|
-      t.string   "title"
-      t.text     "content"
-      t.integer  "author_id",  null: false
-      t.integer  "project_id", null: false
-      t.datetime "created_at"
-      t.datetime "updated_at"
-      t.string   "file_name"
-      t.datetime "expires_at"
-    end
-    
-    add_index "snippets", ["created_at"], name: "index_snippets_on_created_at", using: :btree
-    add_index "snippets", ["expires_at"], name: "index_snippets_on_expires_at", using: :btree
-    add_index "snippets", ["project_id"], name: "index_snippets_on_project_id", using: :btree
+    # create_table "snippets", force: true do |t|
+    #   t.string   "title"
+    #   t.text     "content"
+    #   t.integer  "author_id",  null: false
+    #   t.integer  "project_id", null: false
+    #   t.datetime "created_at"
+    #   t.datetime "updated_at"
+    #   t.string   "file_name"
+    #   t.datetime "expires_at"
+    # end
+
+    # add_index "snippets", ["created_at"], name: "index_snippets_on_created_at", using: :btree
+    # add_index "snippets", ["expires_at"], name: "index_snippets_on_expires_at", using: :btree
+    # add_index "snippets", ["project_id"], name: "index_snippets_on_project_id", using: :btree
     
     create_table "taggings", force: true do |t|
       t.integer  "tag_id"

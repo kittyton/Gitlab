@@ -58,6 +58,7 @@ module API
       @project || not_found!("Project")
     end
 
+
     def find_project(id)
       project = Project.find_with_namespace(id) || Project.find_by(id: id)
 
@@ -65,6 +66,31 @@ module API
         project
       else
         nil
+      end
+    end
+
+    def iscas_user_project
+      content = params[:content]
+
+      content_temp = JSON.parse(content)
+
+      projectName = content_temp["project"]
+      groupName = content_temp["group"]
+
+      private_token_value = params[:account]
+
+      params[:private_token] = private_token_value
+
+      @project ||= iscas_find_project(projectName, groupName)
+
+      @project || not_found!("Project")
+    end
+
+    def iscas_find_project(projectName, groupName)
+      project = Project.find_by(name: projectName)
+
+      if project && can?(current_user, :read_project, project)
+        project
       end
     end
 
@@ -166,6 +192,17 @@ module API
       attrs = {}
       keys.each do |key|
         if params[key].present? or (params.has_key?(key) and params[key] == false)
+          attrs[key] = params[key]
+        end
+      end
+      ActionController::Parameters.new(attrs).permit!
+    end
+
+    def iscas_attributes_for_keys(keys, custom_params = nil)
+      params_hash = custom_params || params
+      attrs = {}
+      keys.each do |key|
+        if (params[key].present? or (params.has_key?(key) and params[key] == false)) and (key != "content")
           attrs[key] = params[key]
         end
       end

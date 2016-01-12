@@ -17,6 +17,7 @@ class Projects::MergeRequestsController < Projects::ApplicationController
 
   # Allow modify merge_request
   before_action :authorize_update_merge_request!, only: [:close, :edit, :update, :sort]
+  include IscasSearchService
 
   def index
     terms = params['issue_search']
@@ -104,8 +105,25 @@ class Projects::MergeRequestsController < Projects::ApplicationController
   def create
     @target_branches ||= []
     @merge_request = MergeRequests::CreateService.new(project, current_user, merge_request_params).execute
-
+    merge_request_params=params[:merge_request]
     if @merge_request.valid?
+      #iscas_search
+      enableSearch=IscasSettings.enableSearch
+      if enableSearch==true
+        id=@merge_request.id
+        title="#{merge_request_params[:title]}"
+        des="#{merge_request_params[:description]}"
+        assignee_id="#{merge_request_params[:assignee_id]}"
+        if assignee_id==""
+          assignTo="unassigned"
+        else
+          assignTo=User.find_by(id:assignee_id).email
+        end
+        status="opened"
+        date=Time.now.strftime("%Y-%m-%dT%H:%M:%S")
+        projectId=merge_request_params[:target_project_id]
+        addMergeRequest(id,title,assignTo,status,projectId,des,date)
+      end
       redirect_to(merge_request_path(@merge_request))
     else
       @source_project = @merge_request.source_project

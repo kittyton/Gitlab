@@ -33,6 +33,12 @@ module Gitlab
         commit_attrs = commits_limited.map(&:hook_attrs)
 
         type = Gitlab::Git.tag_ref?(ref) ? "tag_push" : "push"
+        
+        tag_push_events_value = true
+        tag_push_type = "ProjectHook"
+
+        
+        
         # Hash to be passed as post_receive_data
         data = {
           object_kind: type,

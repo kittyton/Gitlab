@@ -1,8 +1,9 @@
 module API
   # Projects API
   class ProjectHooks < Grape::API
-    before { authenticate! }
-    before { authorize_admin_project }
+    #before { authenticate! }
+    #before { authorize_admin_project }
+    require 'json'
 
     resource :projects do
       # Get project hooks
@@ -57,6 +58,59 @@ module API
           not_found!("Project hook #{@hook.errors.messages}")
         end
       end
+
+
+      #temp test
+      #Add tag push listenor hook in the project 
+      #
+      # Parameters:
+      #   content:  
+      #       - group : group name 
+      #       - project : project name
+      #       - private_token : private_token
+      #   callback (required) - The hook URL
+      # Example Request:
+      #   POST /projects/iscas/addTagPushListener
+      post ":iscas/addTagPushListener" do
+        res = JSON.parse(params[:data])
+
+        json_task_id = res["task_id"]
+        json_callback = res["callback"]
+        json_content = res["content"]
+        json_account = res["account"]
+
+        params[:callback] = json_callback
+        params[:task_id] = json_task_id
+        params[:content] = json_content
+        params[:account] = json_account
+
+        
+
+        required_attributes! [:callback]
+
+        # attrs = attributes_for_keys [
+        #   :url,
+
+        #   :push_events,
+        #   :issues_events,
+        #   :merge_requests_events,
+        #   :tag_push_events,
+        #   :note_events
+        # ]
+
+        @hook = iscas_user_project.hooks.new(url: params[:callback], push_events: false, issues_events: false, merge_requests_events: false, tag_push_events: true, note_events: false, task_id: params[:task_id])
+
+        if @hook.save
+          present @hook, with: Entities::ProjectHook
+          # present "task_id: " + params[:task_id]
+        else
+          if @hook.errors[:url].present?
+            error!("Invalid url given", 422)
+          end
+          not_found!("Project hook #{@hook.errors.messages}")
+        end
+      end
+
 
       # Update an existing project hook
       #

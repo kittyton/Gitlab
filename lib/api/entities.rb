@@ -51,6 +51,7 @@ module API
     class ProjectHook < Hook
       expose :project_id, :push_events
       expose :issues_events, :merge_requests_events, :tag_push_events
+      expose :task_id
     end
 
     class ForkedFromProject < Grape::Entity
@@ -67,7 +68,8 @@ module API
       expose :owner, using: Entities::UserBasic, unless: ->(project, options) { project.group }
       expose :name, :name_with_namespace
       expose :path, :path_with_namespace
-      expose :issues_enabled, :merge_requests_enabled, :wiki_enabled, :snippets_enabled, :created_at, :last_activity_at
+      # expose :issues_enabled, :merge_requests_enabled, :wiki_enabled, :snippets_enabled, :created_at, :last_activity_at
+      expose :issues_enabled, :merge_requests_enabled, :wiki_enabled, :created_at, :last_activity_at
       expose :creator_id
       expose :namespace
       expose :forked_from_project, using: Entities::ForkedFromProject, if: lambda{ | project, options | project.forked? }
@@ -156,11 +158,11 @@ module API
       expose :parent_ids, :committed_date, :authored_date
     end
 
-    class ProjectSnippet < Grape::Entity
-      expose :id, :title, :file_name
-      expose :author, using: Entities::UserBasic
-      expose :expires_at, :updated_at, :created_at
-    end
+    # class ProjectSnippet < Grape::Entity
+    #   expose :id, :title, :file_name
+    #   expose :author, using: Entities::UserBasic
+    #   expose :expires_at, :updated_at, :created_at
+    # end
 
     class ProjectEntity < Grape::Entity
       expose :id, :iid
@@ -322,7 +324,7 @@ module API
       expose :max_attachment_size
       expose :session_expire_delay
       expose :default_project_visibility
-      expose :default_snippet_visibility
+      # expose :default_snippet_visibility
       expose :restricted_signup_domains
       expose :user_oauth_applications
       expose :after_sign_out_path

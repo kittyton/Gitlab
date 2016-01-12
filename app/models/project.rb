@@ -39,6 +39,7 @@ class Project < ActiveRecord::Base
   include Gitlab::VisibilityLevel
   include Referable
   include Sortable
+  include AfterCommitQueue
 
   extend Gitlab::ConfigHelper
   extend Enumerize
@@ -51,7 +52,7 @@ class Project < ActiveRecord::Base
   default_value_for :merge_requests_enabled, gitlab_config_features.merge_requests
   default_value_for :wiki_enabled, gitlab_config_features.wiki
   default_value_for :wall_enabled, false
-  default_value_for :snippets_enabled, gitlab_config_features.snippets
+  # default_value_for :snippets_enabled, gitlab_config_features.snippets
 
   # set last_activity_at to the same as created_at
   after_create :set_last_activity_at
@@ -108,7 +109,7 @@ class Project < ActiveRecord::Base
   has_many :events,             dependent: :destroy
   has_many :milestones,         dependent: :destroy
   has_many :notes,              dependent: :destroy
-  has_many :snippets,           dependent: :destroy, class_name: 'ProjectSnippet'
+  # has_many :snippets,           dependent: :destroy, class_name: 'ProjectSnippet'
   has_many :hooks,              dependent: :destroy, class_name: 'ProjectHook'
   has_many :protected_branches, dependent: :destroy
   has_many :project_members, dependent: :destroy, as: :source, class_name: 'ProjectMember'
@@ -119,7 +120,6 @@ class Project < ActiveRecord::Base
   has_many :starrers, through: :users_star_projects, source: :user
 
   has_one :import_data, dependent: :destroy, class_name: "ProjectImportData"
-  has_one :gitlab_ci_project, dependent: :destroy, class_name: "Ci::Project", foreign_key: :gitlab_id
 
   delegate :name, to: :owner, allow_nil: true, prefix: true
   delegate :members, to: :team, prefix: true
@@ -191,7 +191,7 @@ class Project < ActiveRecord::Base
     state :finished
     state :failed
 
-    after_transition any => :started, do: :add_import_job
+    after_transition any => :started, do: :schedule_add_import_job
     after_transition any => :finished, do: :clear_import_data
   end
 
@@ -275,13 +275,17 @@ class Project < ActiveRecord::Base
     id && persisted?
   end
 
+  def schedule_add_import_job
+      run_after_commit(:add_import_job)
+  end
+
   def add_import_job
     if forked?
-      unless RepositoryForkWorker.perform_async(id, forked_from_project.path_with_namespace, self.namespace.path)
+       unless RepositoryForkWorker.perform_async(id, forked_from_project.path_with_namespace, self.namespace.path)
         import_fail
       end
     else
-      RepositoryImportWorker.perform_in(2.seconds, id)
+      RepositoryImportWorker.perform_async(id)
     end
   end
 
@@ -428,7 +432,7 @@ class Project < ActiveRecord::Base
   end
 
   def gitlab_ci?
-    gitlab_ci_service && gitlab_ci_service.active && gitlab_ci_project.present?
+    gitlab_ci_service && gitlab_ci_service.active 
   end
 
   def ci_services
@@ -516,6 +520,7 @@ class Project < ActiveRecord::Base
 
   def execute_hooks(data, hooks_scope = :push_hooks)
     hooks.send(hooks_scope).each do |hook|
+      
       hook.async_execute(data, hooks_scope.to_s)
     end
   end
@@ -523,6 +528,7 @@ class Project < ActiveRecord::Base
   def execute_services(data, hooks_scope = :push_hooks)
     # Call only service hooks that are active for this scope
     services.send(hooks_scope).each do |service|
+      
       service.async_execute(data)
     end
   end
