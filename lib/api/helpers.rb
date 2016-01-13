@@ -1,4 +1,6 @@
 module API
+  require 'net/http'
+  require 'uri'
   module APIHelpers
     PRIVATE_TOKEN_HEADER = "HTTP_PRIVATE_TOKEN"
     PRIVATE_TOKEN_PARAM = :private_token
@@ -87,7 +89,14 @@ module API
     end
 
     def iscas_find_project(projectName, groupName)
-      project = Project.find_by(name: projectName)
+      namespace = Namespace.find_by(name: groupName)
+      Rails.logger.info "namespace is #{namespace}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      namespace_id = namespace.id
+      Rails.logger.info "namespace_id in helpers is #{namespace_id}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      # project = Project.find_by(name: projectName).where(namespace_id: namespace_id)
+      project = Project.where(namespace_id: namespace_id, name: projectName).first
+      Rails.logger.info "project is #{project}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      Rails.logger.info "project_id is #{project.id}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
       if project && can?(current_user, :read_project, project)
         project
@@ -363,5 +372,80 @@ module API
       error!(errors[:access_level], 422) if errors[:access_level].any?
       not_found!(errors)
     end
+
+    # http post helper
+    # Parameters:
+    #   url: Des of the url
+    #   data: data want to be added in the post body
+    #
+    def iscas_create_post_helper(url, data)
+      Rails.logger.info "url is #{url}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      url = URI.parse(url)
+      Rails.logger.info "url is #{url}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      req = Net::HTTP::Put.new(url.path,{'Content-Type' => 'application/json'})
+      Rails.logger.info "req is #{req}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      req.body = data  
+      Rails.logger.info "req.body is #{req.body}~~~~~~~~~~~~~~~~~~~~~~~~"
+      Rails.logger.info "req is #{req}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      begin
+      http=Net::HTTP.new(url.host,url.port)
+      Rails.logger.info "http is #{http}~~~~~~~~~~~~~~~~~~~~~~~~"
+      #set the connection  time threshold
+      http.open_timeout=1
+      res = http.request(req)
+      Rails.logger.info "res in iscas_create_post_helper is #{res}~~~~~~~~~~~~~~`"
+      Rails.logger.info "res.code is #{res.code}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      Rails.logger.info "res.body is #{res.body}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      
+      res
+
+      rescue
+      end                         
+    end
+
+    def iscas_get_param_form_json(params_data)
+        res = JSON.parse(params_data)
+
+        json_task_id = res["task_id"]
+        json_callback = res["callback"]
+        json_content = res["content"]
+        json_account = res["account"]
+        # json_task_data = res["task_data"]
+
+        params[:callback] = json_callback
+        params[:task_id] = json_task_id
+        params[:content] = json_content
+        params[:account] = json_account
+    end
+
+    def iscas_create_project_post_helper(project_url)
+      Rails.logger.info "params[:data] is #{params[:data]}"
+
+      msg_value =  "gitlab code repository address is : ".concat(project_url)
+      Rails.logger.info "msg_value is #{msg_value}~~~~~~~~~~~~~~~~~~~~~~~"
+      field_value = "output data"
+
+      task_data = {
+        msg: msg_value,
+        field1: field_value
+      }
+
+      task_data_value = task_data.to_json
+
+      res = JSON.parse(params[:data])
+      res["task_data"] = task_data_value
+      params[:data] = res.to_json
+      Rails.logger.info "new params[:data] is #{params[:data]}"
+
+        # return to url by json_callback to post json_task_id
+        # put task_id into data in the of iscas_execute in web_hook
+        # Net::HTTP.post_form(url, data)
+        # url = URI.parse(json_callback) 
+      Rails.logger.info "start post in iscas/createProjectEvent ~~~~~~~~~~~~~~~~~~~~"
+      res = iscas_create_post_helper(params[:callback], params[:data])
+      Rails.logger.info "res is #{res}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      Rails.logger.info "finish post in iscas/createProjectEvent~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    end
+
   end
 end

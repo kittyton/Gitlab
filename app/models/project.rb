@@ -520,7 +520,7 @@ class Project < ActiveRecord::Base
 
   def execute_hooks(data, hooks_scope = :push_hooks)
     hooks.send(hooks_scope).each do |hook|
-      
+      Rails.logger.info "hooks_scope in execute_hooks is #{hooks_scope}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       hook.async_execute(data, hooks_scope.to_s)
     end
   end
@@ -528,7 +528,7 @@ class Project < ActiveRecord::Base
   def execute_services(data, hooks_scope = :push_hooks)
     # Call only service hooks that are active for this scope
     services.send(hooks_scope).each do |service|
-      
+      Rails.logger.info "hooks_scope in execute_services is #{hooks_scope}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       service.async_execute(data)
     end
   end

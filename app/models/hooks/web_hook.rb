@@ -20,7 +20,9 @@ class WebHook < ActiveRecord::Base
   include Sortable
   include HTTParty
   #include HttpHelper
-  require "open-uri" 
+  require "open-uri"
+  require 'net/http'
+  require 'json' 
 
   default_value_for :push_events, true
   default_value_for :issues_events, false
@@ -83,7 +85,29 @@ class WebHook < ActiveRecord::Base
   # => invoked by proform in class ProjectWebHookWorker in path "app/works/project_web_hook_worker.rb".
 
   def iscas_execute(data, hook_name, webhook_instance)
+    Rails.logger.info "hook_name is #{hook_name}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    # if hook_name is note_hooks, put it in a method, 
+    # parse its noteable type whether it is MergeRequest OR  Issue
+    # the type of iscas_execute param----->data is json
+    if hook_name == "note_hooks"
+      note_type = iscas_note_judge(data)
+    end
+
     task_id = webhook_instance.task_id
+    project_id = webhook_instance.project_id
+
+    Rails.logger.info "project_id is #{project_id}~~~~~~~~~~~~~~~~~~~~~~~~~~```"
+    project = Project.find_by(id: project_id)
+    Rails.logger.info "project to the hook is #{project}"
+    project_url = project.web_url
+    Rails.logger.info "url of the project is #{project_url}"
+    field_value = "output data"
+    task_data = {
+      msg: project_url,
+      field1: field_value
+    }
+
+    Rails.logger.info "task_data is #{task_data}"
 
     back_cmd = "cmd"
     back_account = "account"
@@ -91,6 +115,9 @@ class WebHook < ActiveRecord::Base
     back_task_id = task_id
     back_content = "content"
     back_callback = nil
+    back_task_data = task_data.to_json
+
+    Rails.logger.info "back_task_data is #{back_task_data}"
 
     data_value = {
           cmd: back_cmd,
@@ -98,23 +125,93 @@ class WebHook < ActiveRecord::Base
           password: back_password,
           task_id: back_task_id,
           content: back_content,
-          callback: back_callback
+          callback: back_callback,
+          task_data: back_task_data
         }
     data_value = data_value.to_json
     data["data"] = data_value 
+    Rails.logger.info "data in iscas_execute is #{data}"
      
     parsed_url = URI.parse(url)
+    Rails.logger.info "parsed_url is #{parsed_url}~~~~~~~~~~~~~~~~~~~~url is #{url}"
     
-    res = iscas_post_handler(parsed_url, data)
+    if hook_name == "note_hooks"
+      if note_type != "MergeRequest"
+        Rails.logger.info "it is not a MergeRequest comment"
+        # execute null
+      else
+        res = iscas_post_handler(parsed_url, data)
+        Rails.logger.info "res in note_hooks iscas_execute is  #{res}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`"
 
+        Rails.logger.info "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+        Rails.logger.info "res note_hooks code is #{res.code}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        Rails.logger.info "res note_hooks body is #{res.body}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        body = res.body
+        Rails.logger.info "body note_hooks is #{body}~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        result = JSON.parse(body)
+        code = result["code"]
+        Rails.logger.info "code note_hooks is #{code}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        msg = result["msg"]
+        Rails.logger.info "msg note_hooks is #{msg}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        id = webhook_instance.id
+        Rails.logger.info "webhook id note_hooks is #{id}~~~~~~~~~~~~~~~~~~~~~~~~"
+        iscas_delete_hook(id, code, msg)
+        # Rails.logger.info "res_new body is #{res_new.body}"
+        Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      end
+    else
+      res = iscas_post_handler(parsed_url, data)
+      Rails.logger.info "res in iscas_execute is  #{res}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`"
+
+      Rails.logger.info "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      Rails.logger.info "res code is #{res.code}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      Rails.logger.info "res body is #{res.body}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      body = res.body
+      Rails.logger.info "body is #{body}~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      result = JSON.parse(body)
+      code = result["code"]
+      Rails.logger.info "code is #{code}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      msg = result["msg"]
+      Rails.logger.info "msg is #{msg}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      id = webhook_instance.id
+      Rails.logger.info "webhook id is #{id}~~~~~~~~~~~~~~~~~~~~~~~~"
+      iscas_delete_hook(id, code, msg)
+      # Rails.logger.info "res_new body is #{res_new.body}"
+      Rails.logger.info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    end
+
+  
   rescue SocketError, Errno::ECONNRESET, Errno::ECONNREFUSED, Net::OpenTimeout => e
     logger.error("WebHook Error => #{e}")
     false
   end
 
   def iscas_post_handler(url, data)
+    Rails.logger.info "start post in iscas_post_handler ~~~~~~~~~~~~~~~~~~~~"
     res =  Net::HTTP.post_form(url, data)
+    Rails.logger.info "res in iscas_post_handler is #{res}"
     puts res.body
+    Rails.logger.info "finish post in iscas_post_handler~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    res
+  end
+
+    # when code=10000 and msg = success
+    # delete the hook from db whose id is hook_id
+    #
+
+    def iscas_delete_hook(hook_id, code, msg)
+      if code == "30001" && msg == "success"
+        Rails.logger.info "complete!~~~~~~~~~~~~~~~start delete"
+      else
+        Rails.logger.info "not success, resend the post"
+      end
+    end
+
+  def iscas_note_judge(data)
+    Rails.logger.info "data is #{data} in iscas_note_judge~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    noteable_type_one = data[:object_attributes][:noteable_type]
+    Rails.logger.info "noteable_type_one is #{noteable_type_one}~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    noteable_type_one
   end
 
   def async_execute(data, hook_name)

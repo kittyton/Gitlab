@@ -2,6 +2,8 @@ class GitTagPushService
   attr_accessor :project, :user, :push_data
 
   def execute(project, user, oldrev, newrev, ref)
+    Rails.logger.info "start in GitTagPushService ~~~~~~~~~~~~~~~~~~~~~~execute ~~~~~~~~~~~~~~~~~~~~"
+
     project.repository.expire_cache
 
     @project, @user = project, user
@@ -11,6 +13,7 @@ class GitTagPushService
     project.execute_hooks(@push_data.dup, :tag_push_hooks)
     project.execute_services(@push_data.dup, :tag_push_hooks)
     ProjectCacheWorker.perform_async(project.id)
+    Rails.logger.info "finish in GitTagPushService ~~~~~~~~~~~~~~~~~~~~~~execute ~~~~~~~~~~~~~~~~~~~~"
 
     true
   end
