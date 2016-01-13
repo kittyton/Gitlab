@@ -60,7 +60,8 @@ class Projects::BlobController < Projects::ApplicationController
     index=file_name.rindex('.')
     #get the file type
     file_type=file_name[index..file_name.length-1] 
-    if file_type==".doc"||file_type==".docx"||file_type==".odt"||file_type==".ppt"||file_type==".pptx"||file_type==".odp"||file_type==".xls"||file_type==".xlsx"||file_type==".ods"
+    office_type=[".doc",".docx",".odt",".ppt",".pptx",".odp",".xls",".xlsx",".ods"]
+     if office_type.include?(file_type)
        @blob = @repository.blob_at(@commit.id, @path)
     if @blob
       dir=path_to_tempDir
@@ -77,9 +78,8 @@ class Projects::BlobController < Projects::ApplicationController
       public_path=path_to_public
       pdf_file_name=pdfFileName
       tempPdf_path=construct_tempPdf_path(public_path)
-      @pdf_file_path="/pdfjs/tempPdf"+"/"+pdf_file_name  #used for pass to view
-      tmp_pdf_file_path=public_path+@pdf_file_path
-   
+      @pdf_file_path=File.join("/pdfjs/tempPdf",pdf_file_name)
+      tmp_pdf_file_path=File.join(public_path,@pdf_file_path)
       constructTmpDir(tempPdf_path)
 
       if File.exist?(tmp_pdf_file_path)
@@ -103,8 +103,8 @@ class Projects::BlobController < Projects::ApplicationController
         public_path=path_to_public
         pdf_file_name=pdfFileName
         tempPdf_path=construct_tempPdf_path(public_path)
-        @pdf_file_path="/pdfjs/tempPdf"+"/"+pdf_file_name  #used for pass to view
-        tmp_pdf_file_path=public_path+@pdf_file_path
+        @pdf_file_path=File.join("/pdfjs/tempPdf",pdf_file_name)
+        tmp_pdf_file_path=File.join(public_path,@pdf_file_path)
         constructTmpDir(tempPdf_path)
         if File.exist?(tmp_pdf_file_path)
         else
