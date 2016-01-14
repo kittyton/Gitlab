@@ -1,5 +1,7 @@
 module API
   require 'net/http'
+  require "open-uri"
+  require 'json' 
   require 'uri'
   module APIHelpers
     PRIVATE_TOKEN_HEADER = "HTTP_PRIVATE_TOKEN"
@@ -379,14 +381,21 @@ module API
     #   data: data want to be added in the post body
     #
     def iscas_create_post_helper(url, data)
+      Rails.logger.info "data in iscas_create_post_helper is #{data}"
       Rails.logger.info "url is #{url}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       url = URI.parse(url)
       Rails.logger.info "url is #{url}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-      req = Net::HTTP::Put.new(url.path,{'Content-Type' => 'application/json'})
+      req = Net::HTTP::Post.new(url.path,{'Content-Type' => 'application/json'})
       Rails.logger.info "req is #{req}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       req.body = data  
       Rails.logger.info "req.body is #{req.body}~~~~~~~~~~~~~~~~~~~~~~~~"
       Rails.logger.info "req is #{req}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
       begin
       http=Net::HTTP.new(url.host,url.port)
       Rails.logger.info "http is #{http}~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -400,8 +409,43 @@ module API
       res
 
       rescue
-      end                         
+      end
     end
+
+    def iscas_post_handler(url, data)
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info "url is #{url}~~~~~~~~~~~~~"
+
+      uri = URI.parse(url)
+      Rails.logger.info "uri is #{uri}"
+      http = Net::HTTP.new(uri.host, uri.port)
+      Rails.logger.info "http is #{http}"
+      request = Net::HTTP::Post.new(uri.request_uri)
+      Rails.logger.info "request is request"
+      request.set_form_data(data)
+      response = http.request(request)
+      Rails.logger.info "response is #{response}"
+      return response
+
+    end
+
+
+    #   def iscas_post_handler(url, data)
+    #     Rails.logger.info "start post in iscas_post_handler ~~~~~~~~~~~~~~~~~~~~"
+    #     res =  Net::HTTP.post_form(url, data)
+    #     Rails.logger.info "res in iscas_post_handler is #{res}"
+    #     puts res.body
+    #     Rails.logger.info "finish post in iscas_post_handler~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        
+    #     res
+    # end
+
+
 
     def iscas_get_param_form_json(params_data)
         res = JSON.parse(params_data)
@@ -418,8 +462,9 @@ module API
         params[:account] = json_account
     end
 
-    def iscas_create_project_post_helper(project_url)
-      Rails.logger.info "params[:data] is #{params[:data]}"
+
+  def iscas_create_project_post_helper(project_url)
+      Rails.logger.info "params[:data] is #{params[:data]}********************************************~~~~~~~~~~~~~!!!!!!!!"
 
       msg_value =  "gitlab code repository address is : ".concat(project_url)
       Rails.logger.info "msg_value is #{msg_value}~~~~~~~~~~~~~~~~~~~~~~~"
@@ -436,15 +481,45 @@ module API
       res["task_data"] = task_data_value
       params[:data] = res.to_json
       Rails.logger.info "new params[:data] is #{params[:data]}"
+      Rails.logger.info "new params[:data] is #{params[:data].to_json}"
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      post_data = {
+        data: params[:data]
+      }
+
+      Rails.logger.info "post_data is #{post_data}"
 
         # return to url by json_callback to post json_task_id
         # put task_id into data in the of iscas_execute in web_hook
         # Net::HTTP.post_form(url, data)
         # url = URI.parse(json_callback) 
       Rails.logger.info "start post in iscas/createProjectEvent ~~~~~~~~~~~~~~~~~~~~"
-      res = iscas_create_post_helper(params[:callback], params[:data])
+      # Rails.logger.info "params[:data] is #{params[:data]}!!!!!!!!!!!!!BEFORE POST ~~~~~~~"
+      # res = iscas_create_post_helper(params[:callback], post_data.to_json)
+      res = iscas_post_handler(params[:callback], post_data)
       Rails.logger.info "res is #{res}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       Rails.logger.info "finish post in iscas/createProjectEvent~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    end
+
+    
+    def iscas_reply_workflow(callback)
+      code_value = "10000"
+      msg_value = "success"
+
+      reply = {
+        code: code_value,
+        msg: msg_value
+      }
+      Rails.logger.info "reply is #{reply}~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      reply = reply.to_json
+      Rails.logger.info "reply new is #{reply}~~~~~~~~~~~~~~~~~~~~~~~"
+
+      iscas_create_post_helper(callback, reply)
     end
 
   end

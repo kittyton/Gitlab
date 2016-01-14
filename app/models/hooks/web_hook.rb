@@ -99,7 +99,7 @@ class WebHook < ActiveRecord::Base
     Rails.logger.info "project_id is #{project_id}~~~~~~~~~~~~~~~~~~~~~~~~~~```"
     project = Project.find_by(id: project_id)
     Rails.logger.info "project to the hook is #{project}"
-    project_url = project.web_url
+    project_url = "gitlab code repository address is : ".concat(project.web_url)
     Rails.logger.info "url of the project is #{project_url}"
     field_value = "output data"
     task_data = {
@@ -188,11 +188,31 @@ class WebHook < ActiveRecord::Base
 
   def iscas_post_handler(url, data)
     Rails.logger.info "start post in iscas_post_handler ~~~~~~~~~~~~~~~~~~~~"
-    res =  Net::HTTP.post_form(url, data)
-    Rails.logger.info "res in iscas_post_handler is #{res}"
-    puts res.body
-    Rails.logger.info "finish post in iscas_post_handler~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-    res
+    # res =  Net::HTTP.post_form(url, data)
+    # Rails.logger.info "res in iscas_post_handler is #{res}"
+    # puts res.body
+    # Rails.logger.info "finish post in iscas_post_handler~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    # res
+
+
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info " "
+      Rails.logger.info "url is #{url}~~~~~~~~~~~~~"
+
+      uri = url
+      Rails.logger.info "uri is #{uri}"
+      http = Net::HTTP.new(uri.host, uri.port)
+      Rails.logger.info "http is #{http}"
+      request = Net::HTTP::Post.new(uri.request_uri)
+      Rails.logger.info "request is request"
+      request.set_form_data(data)
+      response = http.request(request)
+      Rails.logger.info "response is #{response}"
+      return response
   end
 
     # when code=10000 and msg = success
@@ -200,8 +220,9 @@ class WebHook < ActiveRecord::Base
     #
 
     def iscas_delete_hook(hook_id, code, msg)
-      if code == "30001" && msg == "success"
+      if code == "10000" && msg == "success"
         Rails.logger.info "complete!~~~~~~~~~~~~~~~start delete"
+        WebHook.find_by(id: hook_id).destroy
       else
         Rails.logger.info "not success, resend the post"
       end
@@ -213,6 +234,7 @@ class WebHook < ActiveRecord::Base
     Rails.logger.info "noteable_type_one is #{noteable_type_one}~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     noteable_type_one
   end
+
 
   def async_execute(data, hook_name)
     Sidekiq::Client.enqueue(ProjectWebHookWorker, id, data, hook_name)
