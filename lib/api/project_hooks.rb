@@ -134,7 +134,6 @@ module API
         if @hook.save
           present @hook, with: Entities::ProjectHook
           iscas_reply_workflow(params[:callback])
-          Rails.logger.info "finish in addMergeRequestListener~~~~~~~~~~~~~~~~~~~~~~success!!!"
         else
           if @hook.errors[:url].present?
             error!("Invalid url given", 422)
@@ -165,7 +164,6 @@ module API
         if @hook.save
           present @hook, with: Entities::ProjectHook
           iscas_reply_workflow(params[:callback])
-          Rails.logger.info "finish in addMergeRequestListener~~~~~~~~~~~~~~~~~~~~~~success!!!"
         else
           if @hook.errors[:url].present?
             error!("Invalid url given", 422)
@@ -196,7 +194,6 @@ module API
         if @hook.save
           present @hook, with: Entities::ProjectHook
           iscas_reply_workflow(params[:callback])
-          Rails.logger.info "finish in addCommentsListener~~~~~~~~~~~~~~~~~~~~~~success!!!"
         else
           if @hook.errors[:url].present?
             error!("Invalid url given", 422)
@@ -227,7 +224,6 @@ module API
         if @hook.save
           present @hook, with: Entities::ProjectHook
           iscas_reply_workflow(params[:callback])
-          Rails.logger.info "finish in addPushListener~~~~~~~~~~~~~~~~~~~~~~success!!!"
         else
           if @hook.errors[:url].present?
             error!("Invalid url given", 422)
@@ -264,16 +260,12 @@ module API
         projectName = content_temp["project"]
         groupName = content_temp["group"]
 
-        Rails.logger.info "projectName is #{projectName}, groupName is #{groupName}"
         group = Namespace.find_by(name: groupName)
-        Rails.logger.info "group is #{group}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         group_id = group.id
 
         params[:name] = projectName
         params[:namespace_id] = group_id
         params[:private_token] = params[:account]
-        Rails.logger.info "private_token is #{params[:private_token]}"
-        Rails.logger.info "account is #{params[:account]}"
 
         required_attributes! [:name]
 
@@ -291,7 +283,6 @@ module API
         publik = parse_boolean(publik)
         attrs[:visibility_level] = Gitlab::VisibilityLevel::PUBLIC if !attrs[:visibility_level].present? && publik == true
         # attrs
-        Rails.logger.info "current_user is #{current_user}~~~~~~~~~~"
         @project = ::Projects::CreateService.new(current_user, attrs).execute
 
         if @project.saved?
@@ -302,7 +293,6 @@ module API
           #return sccuess handle msg
           iscas_create_project_post_helper(params[:callback])
           
-          Rails.logger.info "finish in createProjectEvent~~~~~~~~~~~~~~~~~~~~~~success!!!"
         else
           if @project.errors[:limit_reached].present?
             error!(@project.errors[:limit_reached], 403)
