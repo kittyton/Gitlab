@@ -30,7 +30,9 @@ module Notes
     end
 
     def execute_hooks(note)
+      Rails.logger.info "note is #{note} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
       note_data = hook_data(note)
+      Rails.logger.info "note_data is #{note_data}@@@@@@@@@@@@~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       note.project.execute_hooks(note_data, :note_hooks)
       note.project.execute_services(note_data, :note_hooks)
     end

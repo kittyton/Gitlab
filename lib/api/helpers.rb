@@ -1,4 +1,8 @@
 module API
+  require 'net/http'
+  require "open-uri"
+  require 'json' 
+  require 'uri'
   module APIHelpers
     PRIVATE_TOKEN_HEADER = "HTTP_PRIVATE_TOKEN"
     PRIVATE_TOKEN_PARAM = :private_token
@@ -87,7 +91,14 @@ module API
     end
 
     def iscas_find_project(projectName, groupName)
-      project = Project.find_by(name: projectName)
+      namespace = Namespace.find_by(name: groupName)
+      Rails.logger.info "namespace is #{namespace}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      namespace_id = namespace.id
+      Rails.logger.info "namespace_id in helpers is #{namespace_id}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      # project = Project.find_by(name: projectName).where(namespace_id: namespace_id)
+      project = Project.where(namespace_id: namespace_id, name: projectName).first
+      Rails.logger.info "project is #{project}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      Rails.logger.info "project_id is #{project.id}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
       if project && can?(current_user, :read_project, project)
         project
@@ -363,5 +374,107 @@ module API
       error!(errors[:access_level], 422) if errors[:access_level].any?
       not_found!(errors)
     end
+
+    # http post helper
+    # Parameters:
+    #   url: Des of the url
+    #   data: data want to be added in the post body
+    #
+    def iscas_create_post_helper(url, data)
+      url = URI.parse(url)
+      req = Net::HTTP::Post.new(url.path,{'Content-Type' => 'application/json'})
+      req.body = data  
+      
+      begin
+      http=Net::HTTP.new(url.host,url.port)
+      #set the connection  time threshold
+      http.open_timeout=1
+      res = http.request(req)
+      
+      
+      res
+
+      rescue
+      end
+    end
+
+    def iscas_post_handler(url, data)
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.set_form_data(data)
+      response = http.request(request)
+      return response
+
+    end
+
+
+    #   def iscas_post_handler(url, data)
+    #     Rails.logger.info "start post in iscas_post_handler ~~~~~~~~~~~~~~~~~~~~"
+    #     res =  Net::HTTP.post_form(url, data)
+    #     Rails.logger.info "res in iscas_post_handler is #{res}"
+    #     puts res.body
+    #     Rails.logger.info "finish post in iscas_post_handler~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        
+    #     res
+    # end
+
+
+
+    def iscas_get_param_form_json(params_data)
+        res = JSON.parse(params_data)
+
+        json_task_id = res["task_id"]
+        json_callback = res["callback"]
+        json_content = res["content"]
+        json_account = res["account"]
+        # json_task_data = res["task_data"]
+
+        params[:callback] = json_callback
+        params[:task_id] = json_task_id
+        params[:content] = json_content
+        params[:account] = json_account
+    end
+
+
+  def iscas_create_project_post_helper(project_url)
+      msg_value =  "gitlab code repository address is : ".concat(project_url)
+      field_value = "output data"
+
+      task_data = {
+        msg: msg_value,
+        field1: field_value
+      }
+
+      task_data_value = task_data.to_json
+
+      res = JSON.parse(params[:data])
+      res["task_data"] = task_data_value
+      params[:data] = res.to_json
+      
+      post_data = {
+        data: params[:data]
+      }
+        # return to url by json_callback to post json_task_id
+        # put task_id into data in the of iscas_execute in web_hook
+        # Net::HTTP.post_form(url, data)
+        # url = URI.parse(json_callback) 
+      res = iscas_post_handler(params[:callback], post_data)
+    end
+
+    
+    def iscas_reply_workflow(callback)
+      code_value = "10000"
+      msg_value = "success"
+
+      reply = {
+        code: code_value,
+        msg: msg_value
+      }
+      reply = reply.to_json
+
+      iscas_create_post_helper(callback, reply)
+    end
+
   end
 end

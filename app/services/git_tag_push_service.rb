@@ -2,6 +2,7 @@ class GitTagPushService
   attr_accessor :project, :user, :push_data
 
   def execute(project, user, oldrev, newrev, ref)
+
     project.repository.expire_cache
 
     @project, @user = project, user
