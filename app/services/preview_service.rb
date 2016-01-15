@@ -45,24 +45,26 @@ module PreviewService
     return dir
   end
 
+  #MethodName:doc_file_name
+  #Des:get the temp office file name
+  #Author:liuqingqing
+  def doc_file_name
+    name=@path.tr(" ","")
+    new_file_name=[@blob.id,name].join
+    return new_file_name
+  end
+
   #MethodName:path_to_tempDoc
   #Des:get the temp office file path
   #Author:liuqingqing
   def path_to_tempDoc
     dir=path_to_tempDir
-    #new_file_name=@blob.id+@path
-    new_file_name=[@blob.id,@path].join
+    new_file_name=doc_file_name
     new_file_path=[dir,new_file_name].join("/")
     return new_file_path
   end
 
-  #MethodName:doc_file_name
-  #Des:get the temp office file name
-  #Author:liuqingqing
-  def doc_file_name
-    new_file_name=[@blob.id,@path].join
-    return new_file_name
-  end
+ 
 
   #MethodName:pdfFileName
   #Des:get the pdf file name
