@@ -66,6 +66,15 @@ class Projects::BlobController < Projects::ApplicationController
     if @blob
       dir=path_to_tempDir
       new_file_path=path_to_tempDoc
+      public_path=path_to_public
+      pdf_file_name=pdfFileName
+      tempPdf_path=construct_tempPdf_path(public_path)
+      @pdf_file_path=File.join("/pdfjs/tempPdf",pdf_file_name)
+      tmp_pdf_file_path=File.join(public_path,@pdf_file_path)
+      constructTmpDir(tempPdf_path)
+      if File.exist?(tmp_pdf_file_path)
+
+      else
       constructTmpDir(dir)
       if File.exist?(new_file_path)
       else
@@ -75,16 +84,7 @@ class Projects::BlobController < Projects::ApplicationController
       end
 
       #Convert the office file to pdf
-      public_path=path_to_public
-      pdf_file_name=pdfFileName
-      tempPdf_path=construct_tempPdf_path(public_path)
-      @pdf_file_path=File.join("/pdfjs/tempPdf",pdf_file_name)
-      tmp_pdf_file_path=File.join(public_path,@pdf_file_path)
-      constructTmpDir(tempPdf_path)
-
-      if File.exist?(tmp_pdf_file_path)
-      else
-        if `pgrep soffice`.size == 0
+      if `pgrep soffice`.size == 0
           spawn('soffice "-accept=socket,port=2002;urp;"')
         else
         # has lanched, convert directly
@@ -92,7 +92,9 @@ class Projects::BlobController < Projects::ApplicationController
         LRU(tempPdf_path,threshold)
         convertToPdf(new_file_path,tmp_pdf_file_path)
         end  
+
       end
+
     else
       not_found!
     end
