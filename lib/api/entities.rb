@@ -226,6 +226,13 @@ module API
       expose :author, using: Entities::UserBasic
     end
 
+    class IscasMRNote < Grape::Entity
+      expose :note
+      expose :created_at
+      expose :updated_at
+      expose :author, using: Entities::UserBasic
+    end
+
     class CommitNote < Grape::Entity
       expose :note
       expose(:path) { |note| note.diff_file_name }
