@@ -70,7 +70,7 @@ class Projects::BlobController < Projects::ApplicationController
       if File.exist?(new_file_path)
       else
         threshold=IscasSettings.tmp_office_threshold
-        empty_tempDir(dir,threshold)
+        LRU(dir,threshold)
         writeFile(@blob.data,new_file_path)
       end
 
@@ -89,7 +89,7 @@ class Projects::BlobController < Projects::ApplicationController
         else
         # has lanched, convert directly
         threshold=IscasSettings.tmp_pdf_threshold
-        empty_tempDir(tempPdf_path,threshold)
+        LRU(tempPdf_path,threshold)
         convertToPdf(new_file_path,tmp_pdf_file_path)
         end  
       end
@@ -109,7 +109,7 @@ class Projects::BlobController < Projects::ApplicationController
         if File.exist?(tmp_pdf_file_path)
         else
           threshold=IscasSettings.tmp_pdf_threshold
-          empty_tempDir(tempPdf_path,threshold)
+          LRU(tempPdf_path,threshold)
           writeFile(@blob.data,tmp_pdf_file_path)
         end
       else

@@ -111,18 +111,29 @@ module PreviewService
     return size
   end
 
-  #MethodName:empty_tempDir
-  #Des:empty tempDir according to the threshold
+
+  #MethodName:LRU
+  #Des:LRU replacement strategy when the tmpDir meets the threshold
   #Author:liuqingiqng
-  def empty_tempDir(dir,threshold)
+  def LRU(dir,threshold)
     size=compute_all_file_size(dir)
     if size>=threshold
-     Dir.foreach(dir) do |entry|
-      if entry!="." and entry!=".."
+      currentTime=Time.new.to_i
+      timeBase=0
+      toDeletePath=""
+      Dir.foreach(dir) do |entry|
+        if entry!="." and entry!=".."
           path=[dir,entry].join("/")
-          File.delete(path)
+          accessTime=File.atime(path).to_i
+          at=File.atime(path)
+          timeDiff=currentTime-accessTime
+          if timeDiff>timeBase
+            timeBase=timeDiff
+            toDeletePath=path
+          end 
         end
-     end
+      end
+      File.delete(toDeletePath)
     end
   end
 
