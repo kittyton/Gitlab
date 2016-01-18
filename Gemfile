@@ -311,7 +311,7 @@ gem 'oauth2', '~> 1.0.0'
 
 # Soft deletion
 gem "paranoia", "~> 2.0"
-
+gem 'pdfjs_rails'
 group :development, :test do
   gem 'guard-rspec', '~> 4.2.0'
 

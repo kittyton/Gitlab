@@ -8,6 +8,8 @@ defaults: &defaults
   enableAudit: true
   enableSearch : true
   gitlab_basic_url: http://localhost:3000
+  tmp_office_threshold: 50000000
+  tmp_pdf_threshold: 1000000000
 
 development:
   <<: *defaults
@@ -20,6 +22,8 @@ development:
   enableAudit: true
   enableSearch : true
   gitlab_basic_url: http://localhost:3000
+  tmp_office_threshold: 50000000
+  tmp_pdf_threshold: 1000000000
 
 production:
   <<: *defaults
@@ -32,6 +36,8 @@ production:
   enableAudit: true
   enableSearch : true
   gitlab_basic_url: http://localhost:3000
+  tmp_office_threshold: 50000000
+  tmp_pdf_threshold: 1000000000
 
 test:
   <<: *defaults
