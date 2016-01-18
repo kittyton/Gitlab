@@ -243,6 +243,7 @@ module API
       #   merge_request_id (required) - ID of MR
       # Examples:
       #   GET /projects/iscas/:id/merge_request/:merge_request_id/comments
+      # Author name: Zhang Yuguang
       #
       get "iscas/:id/merge_request/:merge_request_id/comments" do
         merge_request = user_project.merge_requests.find(params[:merge_request_id])

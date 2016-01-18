@@ -226,6 +226,10 @@ module API
       expose :author, using: Entities::UserBasic
     end
 
+    # Get note content, created_at, updated_at, and author 
+    # Usage: get enteties for /projects/iscas/:id/merge_request/:merge_request_id/comments
+    # Author Name: Zhang Yuguang
+    # 
     class IscasMRNote < Grape::Entity
       expose :note
       expose :created_at
