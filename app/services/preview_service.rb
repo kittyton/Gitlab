@@ -10,6 +10,7 @@ module PreviewService
         cmd="cd /opt/openoffice4/program && python DocumentConverter.py #{infile} #{outfile}"
         `#{cmd}`
         #exe result $?
+        Rails.logger.info "??????????????????????????????? exe result=#{$?}"
       rescue
         #wrong message in $!
       end
@@ -50,6 +51,7 @@ module PreviewService
   #Author:liuqingqing
   def doc_file_name
     name=@path.tr(" ","")
+    name=name.tr("/","_")
     new_file_name=[@blob.id,name].join
     return new_file_name
   end

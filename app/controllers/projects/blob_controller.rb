@@ -86,6 +86,7 @@ class Projects::BlobController < Projects::ApplicationController
       #Convert the office file to pdf
       if `pgrep soffice`.size == 0
           spawn('soffice "-accept=socket,port=2002;urp;"')
+          #spawn('soffice "-accept=socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" -nologo -headless -nofirststartwizard')
         else
         # has lanched, convert directly
         threshold=IscasSettings.tmp_pdf_threshold
