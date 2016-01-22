@@ -25,6 +25,8 @@ class Projects::BlobController < Projects::ApplicationController
     commit unless @repository.empty?
   end
 
+
+
   def create
     result = Files::CreateService.new(@project, current_user, @commit_params).execute
     #iscas_search
@@ -56,12 +58,14 @@ class Projects::BlobController < Projects::ApplicationController
 
 
   def show
+    $type=0
     file_name=params[:id]
     index=file_name.rindex('.')
     #get the file type
     file_type=file_name[index..file_name.length-1] 
     office_type=[".doc",".docx",".odt",".ppt",".pptx",".odp",".xls",".xlsx",".ods"]
      if office_type.include?(file_type)
+      $type=1
        @blob = @repository.blob_at(@commit.id, @path)
     if @blob
       dir=path_to_tempDir
@@ -100,6 +104,7 @@ class Projects::BlobController < Projects::ApplicationController
       not_found!
     end
     elsif file_type==".pdf"
+      $type=1
       #write to tempPdf directly
        @blob = @repository.blob_at(@commit.id, @path)
        if @blob
