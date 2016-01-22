@@ -37,7 +37,7 @@ module Grack
         if git_cmd=="git-upload-pack" && @request.get?
           #iscas_audit
           enableAudit=IscasSettings.enableAudit
-          if enableAudit==true
+          if enableAudit==true && project.visibility_level==0
             record_gitlab_related_operation(@user,"downLoad",@project.id,project.name,project.path)
           end
         end
