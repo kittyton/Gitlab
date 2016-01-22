@@ -7,10 +7,11 @@ module PreviewService
     if File.exist?(outfile)
     else
       begin
-        cmd="cd /opt/openoffice4/program && python DocumentConverter.py #{infile} #{outfile}"
+        public_path=path_to_public
+        cmd="cd #{public_path} && /opt/openoffice4/program/python DocumentConverter.py #{infile} #{outfile}"
         `#{cmd}`
-        #exe result $?
-        Rails.logger.info "??????????????????????????????? exe result=#{$?}"
+        #exe result in $? which include pid and exit,eg:pid 256 exit 0.exit=0 is normal,otherwist the conversion wents wrong 
+        end
       rescue
         #wrong message in $!
       end

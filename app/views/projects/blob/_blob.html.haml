@@ -24,7 +24,7 @@
     .file-title
       = blob_icon blob.mode, blob.name
       %strong
-        = blob.name
+        = blob.name 
       %small
         = number_to_human_size(blob.size)
       .file-actions.hidden-xs
@@ -33,5 +33,7 @@
       = render "text", blob: blob
     - elsif blob.image?
       = render "image", blob: blob
+    - elsif $type==1 && $?.to_i==0
+      = render "office", blob: blob  
     - else
       = render "download", blob: blob
